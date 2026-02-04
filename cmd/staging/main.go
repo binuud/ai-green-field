@@ -3,17 +3,23 @@ package main
 import (
 	"fmt"
 
+	bTensor "github.com/binuud/ai-green-field/pkg/bTensor"
 	"github.com/sirupsen/logrus"
 )
 
-func linearEquation(m float32, x float32, b float32) float32 {
-	return (m*x + b)
-}
-
 func main() {
+
 	logrus.Info("Init")
-	for i := 0; i <= 100; i++ {
-		y := linearEquation(3, float32(i), 5)
-		fmt.Printf("\n x : %d, y : %f", i, y)
-	}
+
+	// Create data
+	// start := float32(0.0)
+	// end := float32(1.0)
+	// step := float32(0.02)
+
+	x := bTensor.NewFromArange(0.0, 1.0, 0.02)
+	fmt.Println("Result X:", x.Data[:10])
+
+	y := x.ApplyLinearEquation(0.7, 0.3)
+	fmt.Println("Result Y:", y[:10])
+
 }

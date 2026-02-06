@@ -8,7 +8,7 @@ import (
 
 const (
 	lr     = 0.01
-	epochs = 2000
+	epochs = 3000
 )
 
 type neuralNetwork struct {
@@ -90,9 +90,13 @@ func Fit(xTrain []float64, yTrain []float64, xTest []float64, yTest []float64, p
 		UpdateLinearParams(p, gradM, gradC, lr)
 
 		if i%50 == 0 {
+			predictedTest := ApplyLinearEquation(xTest, p.Weight, p.Bias)
+			graph.addPoints(xTest, predictedTest, color.RGBA{255, 0, 0, 255})
 			fmt.Printf("\n Loss: %f Weight: %f Bias:%f", loss, p.Weight, p.Bias)
 		}
 
 	}
+
+	graph.saveGraph()
 
 }

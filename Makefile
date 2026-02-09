@@ -21,3 +21,6 @@ vendor: ## run vendor
 	
 run-staging: ## run staging test
 	./scripts/runStaging.sh	
+
+test: ## Run tests
+	go test -v ./pkg/neuralNetwork/...

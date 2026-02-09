@@ -21,8 +21,8 @@ func main() {
 	fmt.Println("Result X:", x.Data[:10])
 
 	actualLinearParams := &nn.LinearParams{
-		Weight: 0.7,
-		Bias:   0.3,
+		Weight: 1.05,
+		Bias:   0.95,
 	}
 
 	y := nn.ApplyLinearEquation(x.Data, actualLinearParams.Weight, actualLinearParams.Bias)
@@ -37,10 +37,20 @@ func main() {
 	fmt.Printf("\n Test Data len %d, %d", len(xTest), len(yTest))
 
 	// create random training weights
-	model := nn.NewLinearRegressionModel(42.0)
+	model := nn.NewNeuralNetwork(&nn.NeuralNetworkConfig{
+		Name:         "LinearRegression",
+		LearningRate: .01,
+		NumEpochs:    3000,
+		Seed:         42.0,
+	})
 
-	fmt.Printf("\n Training weights on model: %v", model)
-
-	nn.Fit(xTrain, yTrain, xTest, yTest, model.Params)
+	model.LogConfig()
+	model.Train(xTrain, yTrain, xTest, yTest)
+	model.LogConfig()
+	//check model loss with test data
+	predicted := model.Predict(xTest)
+	// predicted := ApplyLinearEquation(xTrain, p.Weight, p.Bias)
+	loss := nn.CalculateLoss(yTest, predicted)
+	logrus.Printf("\n Loss on test data %f", loss)
 
 }

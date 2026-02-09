@@ -3,7 +3,8 @@ package neuralNetwork
 import (
 	"fmt"
 	"image/color"
-	"math"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -12,15 +13,19 @@ const (
 )
 
 type neuralNetwork struct {
-	config neuralNetworkConfig
+	config *NeuralNetworkConfig
 }
 
-type neuralNetworkConfig struct {
-	inNeurons     int
-	outNeurons    int
-	hiddenNeurons int
-	numEpochs     int
-	learningRate  float64
+type NeuralNetworkConfig struct {
+	InNeurons        int
+	OutNeurons       int
+	HiddenNeurons    int
+	NumEpochs        int
+	Name             string // Name of the model
+	ModelFile        string // Name of the model file for loading and saving model
+	LearningRate     float64
+	Seed             int64
+	LinearRegression *linearRegressionModel
 }
 
 type LinearParams struct {
@@ -28,66 +33,59 @@ type LinearParams struct {
 	Bias   float64
 }
 
-func NewNeuralNetwork(config neuralNetworkConfig) *neuralNetwork {
+func NewNeuralNetwork(config *NeuralNetworkConfig) *neuralNetwork {
+
+	linearRegression := NewLinearRegressionModel(config.Seed)
+	config.LinearRegression = linearRegression
+	logrus.Infof("\n Model details %v", config)
 	return &neuralNetwork{config: config}
+
 }
 
-func UpdateLinearParams(p *LinearParams, gradientM float64, gradientC float64, lr float64) {
-	p.Weight -= lr * gradientM
-	p.Bias -= lr * gradientC
-}
+func NewNeuralNetworkFromModel(ModelFile string) (error, *neuralNetwork) {
 
-// MSE or Mean Squared Error
-func CalculateLoss(actuals []float64, predictions []float64) float64 {
-	var diff float64
-	for i := range actuals {
-		d := predictions[i] - actuals[i]
-		diff += math.Pow(d, 2.0)
+	err, config := loadFromModelFile(ModelFile)
+	if err != nil {
+		return err, nil
 	}
-	avergageLoss := diff / float64(len(actuals))
-	return avergageLoss
-}
 
-func CalcGradientWeight(orig_x []float64, orig_y []float64, predicted_y []float64) float64 {
-	var diff float64
-	for i, x := range orig_x {
-		diff += (predicted_y[i] - orig_y[i]) * x
-	}
-	return 2 * (diff / float64(len(orig_x)))
-}
+	logrus.Infof("\n Model details %v", config)
 
-func CalcGradientBias(orig []float64, predicted []float64) float64 {
-
-	var diff float64
-	for i := range orig {
-		diff += (predicted[i] - orig[i])
-	}
-	return 2 * (diff / float64(len(orig)))
+	return nil, &neuralNetwork{config: config}
 
 }
 
-func CalculateGradients(xTrain []float64, yTrain []float64, predicted []float64) (gradM float64, gradC float64) {
-
-	gradM = CalcGradientWeight(xTrain, yTrain, predicted)
-	gradC = CalcGradientBias(yTrain, predicted)
-	return
-
+func (nn *neuralNetwork) GetConfig() *NeuralNetworkConfig {
+	return nn.config
 }
 
-func Fit(xTrain []float64, yTrain []float64, xTest []float64, yTest []float64, p *LinearParams) {
+func (nn *neuralNetwork) LogConfig() {
+	logrus.Infof("Model Config %#v", nn.config)
+	logrus.Infof("Linear Model%#v", nn.config.LinearRegression.Params)
+}
+
+func (nn *neuralNetwork) UpdateLinearParams(gradientM float64, gradientC float64, lr float64) {
+	nn.config.LinearRegression.Params.Weight -= lr * gradientM
+	nn.config.LinearRegression.Params.Bias -= lr * gradientC
+}
+
+func (nn *neuralNetwork) Train(xTrain []float64, yTrain []float64, xTest []float64, yTest []float64) {
 
 	graph := NewPlotter()
 	graph.addPoints(xTrain, yTrain, color.RGBA{0, 0, 255, 255})
 	graph.addPoints(xTest, yTest, color.RGBA{0, 255, 0, 255})
 	graph.saveGraph()
 
+	p := nn.config.LinearRegression.Params
+
 	for i := 0; i < epochs; i++ {
 
-		predicted := ApplyLinearEquation(xTrain, p.Weight, p.Bias)
+		predicted := nn.Predict(xTrain)
+		// predicted := ApplyLinearEquation(xTrain, p.Weight, p.Bias)
 		loss := CalculateLoss(yTrain, predicted)
 
 		gradM, gradC := CalculateGradients(xTrain, yTrain, predicted)
-		UpdateLinearParams(p, gradM, gradC, lr)
+		nn.UpdateLinearParams(gradM, gradC, lr)
 
 		if i%50 == 0 {
 			predictedTest := ApplyLinearEquation(xTest, p.Weight, p.Bias)
@@ -99,4 +97,8 @@ func Fit(xTrain []float64, yTrain []float64, xTest []float64, yTest []float64, p
 
 	graph.saveGraph()
 
+}
+
+func (nn *neuralNetwork) Predict(testData []float64) []float64 {
+	return nn.config.LinearRegression.Forward(testData)
 }

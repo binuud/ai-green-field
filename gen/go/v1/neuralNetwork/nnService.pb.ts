@@ -1,0 +1,63 @@
+/* eslint-disable */
+// @ts-nocheck
+/*
+* This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
+*/
+
+import * as fm from "../../fetch.pb"
+export type CreateNeuralNetworkRequest = {
+}
+
+export type CreateNeuralNetworkResponse = {
+}
+
+export type TrainNeuralNetworkRequest = {
+}
+
+export type TrainNeuralNetworkResponse = {
+}
+
+export type TestNeuralNetworkRequest = {
+}
+
+export type TestNeuralNetworkResponse = {
+}
+
+export type LoadNeuralNetworkRequest = {
+}
+
+export type LoadNeuralNetworkResponse = {
+}
+
+export type SaveNeuralNetworkRequest = {
+}
+
+export type SaveNeuralNetworkResponse = {
+}
+
+export type ListNeuralNetworkRequest = {
+}
+
+export type ListNeuralNetworkResponse = {
+}
+
+export class NeuralNetwork {
+  static Create(req: CreateNeuralNetworkRequest, initReq?: fm.InitReq): Promise<CreateNeuralNetworkResponse> {
+    return fm.fetchReq<CreateNeuralNetworkRequest, CreateNeuralNetworkResponse>(`/v1/neuralNetwork/create`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
+  static Train(req: TrainNeuralNetworkRequest, initReq?: fm.InitReq): Promise<TrainNeuralNetworkResponse> {
+    return fm.fetchReq<TrainNeuralNetworkRequest, TrainNeuralNetworkResponse>(`/v1/neuralNetwork/train?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  }
+  static Test(req: TestNeuralNetworkRequest, initReq?: fm.InitReq): Promise<TestNeuralNetworkResponse> {
+    return fm.fetchReq<TestNeuralNetworkRequest, TestNeuralNetworkResponse>(`/v1/neuralNetwork/update`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
+  static Load(req: LoadNeuralNetworkRequest, initReq?: fm.InitReq): Promise<LoadNeuralNetworkResponse> {
+    return fm.fetchReq<LoadNeuralNetworkRequest, LoadNeuralNetworkResponse>(`/v1/neuralNetwork/load`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
+  static Save(req: SaveNeuralNetworkRequest, initReq?: fm.InitReq): Promise<SaveNeuralNetworkResponse> {
+    return fm.fetchReq<SaveNeuralNetworkRequest, SaveNeuralNetworkResponse>(`/v1/neuralNetwork/save`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
+  static List(req: ListNeuralNetworkRequest, initReq?: fm.InitReq): Promise<ListNeuralNetworkResponse> {
+    return fm.fetchReq<ListNeuralNetworkRequest, ListNeuralNetworkResponse>(`/v1/neuralNetwork/list?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  }
+}

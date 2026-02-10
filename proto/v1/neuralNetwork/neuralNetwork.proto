@@ -1,0 +1,8 @@
+/// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+package neuralNetwork;
+
+option go_package = "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork";

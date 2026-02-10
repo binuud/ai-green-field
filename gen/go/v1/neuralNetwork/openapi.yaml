@@ -1,0 +1,111 @@
+openapi: 3.1.0
+info:
+  title: ""
+  version: ""
+paths:
+  /v1/neuralNetwork/create:
+    post:
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNeuralNetworkRequest'
+        required: true
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.Create response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateNeuralNetworkResponse'
+  /v1/neuralNetwork/list:
+    get:
+      operationId: list
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.List response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListNeuralNetworkResponse'
+  /v1/neuralNetwork/load:
+    post:
+      operationId: load
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadNeuralNetworkRequest'
+        required: true
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.Load response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoadNeuralNetworkResponse'
+  /v1/neuralNetwork/save:
+    post:
+      operationId: save
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveNeuralNetworkRequest'
+        required: true
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.Save response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveNeuralNetworkResponse'
+  /v1/neuralNetwork/train:
+    get:
+      operationId: train
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.Train response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainNeuralNetworkResponse'
+  /v1/neuralNetwork/update:
+    post:
+      operationId: test
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestNeuralNetworkRequest'
+        required: true
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.Test response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestNeuralNetworkResponse'
+components:
+  schemas:
+    CreateNeuralNetworkRequest:
+      type: object
+    CreateNeuralNetworkResponse:
+      type: object
+    ListNeuralNetworkResponse:
+      type: object
+    LoadNeuralNetworkRequest:
+      type: object
+    LoadNeuralNetworkResponse:
+      type: object
+    SaveNeuralNetworkRequest:
+      type: object
+    SaveNeuralNetworkResponse:
+      type: object
+    TestNeuralNetworkRequest:
+      type: object
+    TestNeuralNetworkResponse:
+      type: object
+    TrainNeuralNetworkResponse:
+      type: object

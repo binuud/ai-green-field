@@ -1,0 +1,73 @@
+/// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+package neuralNetwork;
+
+option go_package = "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork";
+
+import "google/api/annotations.proto";
+
+// NeuralNetwork
+service NeuralNetwork {
+  // for adding a new brainFlow to the backend
+  rpc Create(CreateNeuralNetworkRequest) returns (CreateNeuralNetworkResponse) {
+    option (google.api.http) = {
+      post : "/v1/neuralNetwork/create"
+      body : "*"
+    };
+  }
+  // for training a NeuralNetwork
+  rpc Train(TrainNeuralNetworkRequest) returns (TrainNeuralNetworkResponse) {
+    option (google.api.http) = {
+      get : "/v1/neuralNetwork/train"
+    };
+  }
+  // for testing an exiting NeuralNetwork
+  rpc Test(TestNeuralNetworkRequest) returns (TestNeuralNetworkResponse) {
+    option (google.api.http) = {
+      post : "/v1/neuralNetwork/update"
+      body : "*"
+    };
+  }
+  // for Loading a NeuralNetwork
+  rpc Load(LoadNeuralNetworkRequest) returns (LoadNeuralNetworkResponse) {
+    option (google.api.http) = {
+      post : "/v1/neuralNetwork/load"
+      body : "*"
+    };
+  }
+
+  // for Saving a NeuralNetwork
+  rpc Save(SaveNeuralNetworkRequest) returns (SaveNeuralNetworkResponse) {
+    option (google.api.http) = {
+      post : "/v1/neuralNetwork/save"
+      body : "*"
+    };
+  }
+  // for listing NeuralNetwork
+  rpc List(ListNeuralNetworkRequest) returns (ListNeuralNetworkResponse) {
+    option (google.api.http) = {
+      get : "/v1/neuralNetwork/list"
+    };
+  }
+}
+
+message CreateNeuralNetworkRequest {}
+message CreateNeuralNetworkResponse {}
+
+message TrainNeuralNetworkRequest {}
+message TrainNeuralNetworkResponse {}
+
+message TestNeuralNetworkRequest {}
+message TestNeuralNetworkResponse {}
+
+message LoadNeuralNetworkRequest {}
+message LoadNeuralNetworkResponse {}
+
+message SaveNeuralNetworkRequest {}
+message SaveNeuralNetworkResponse {}
+
+message ListNeuralNetworkRequest {}
+message ListNeuralNetworkResponse {}

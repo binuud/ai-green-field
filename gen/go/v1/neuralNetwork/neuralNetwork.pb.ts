@@ -50,6 +50,6 @@ export type TrainingState = {
   trainingLoss?: number
   testLoss?: number
   numInputs?: number
-  numOutpus?: number
+  numOutputs?: number
   numLayers?: number
 }

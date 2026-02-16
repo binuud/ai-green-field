@@ -75,7 +75,7 @@ message TrainingState {
   int32 numInputs = 12;
 
   // number of outputs
-  int32 numOutpus = 13;
+  int32 numOutputs = 13;
 
   // number of hidden layers
   int32 numLayers = 14;

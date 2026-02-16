@@ -259,7 +259,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "numOutpus": {
+          "numOutputs": {
             "type": "integer",
             "format": "int32"
           },

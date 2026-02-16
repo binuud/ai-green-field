@@ -11,6 +11,13 @@ import "google/api/annotations.proto";
 
 // NeuralNetwork
 service NeuralNetwork {
+
+  rpc Ping(PingNeuralNetworkRequest) returns (PingNeuralNetworkResponse) {
+    option (google.api.http) = {
+      get : "/v1/neuralNetwork/ping"
+    };
+  }
+
   // for adding a new brainFlow to the backend
   rpc Create(CreateNeuralNetworkRequest) returns (CreateNeuralNetworkResponse) {
     option (google.api.http) = {
@@ -52,6 +59,20 @@ service NeuralNetwork {
       get : "/v1/neuralNetwork/list"
     };
   }
+}
+
+message PingNeuralNetworkRequest {}
+
+message PingNeuralNetworkResponse {
+
+  // ping response creation time
+  int64 createdAt = 1;
+
+  // small description about the service
+  string description = 2;
+
+  // json data with details on the service
+  string data = 3;
 }
 
 message CreateNeuralNetworkRequest {}

@@ -6,3 +6,77 @@ syntax = "proto3";
 package neuralNetwork;
 
 option go_package = "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork";
+
+message TrainingState {
+
+  enum TrainingTypeEnum {
+    TrainingTypeIgnore = 0;
+    Classification = 1;
+    Regression = 2;
+  }
+
+  enum TrainingStateEnum {
+    TrainingStateIgnore = 0;
+    New = 1;
+    Running = 2;
+    Error = 3;
+    Pause = 4;
+    Completed = 5;
+    Stopped = 6;
+  }
+
+  enum ActivationFunctionEnum {
+    ActivationFunctionIgnore = 0;
+    ActivationFunctionNone = 1;
+    Relu = 2;
+    Sigmoid = 3;
+    Tanh = 4;
+    Linear = 5;
+  }
+
+  enum RegularizationEnum {
+    RegularizationIgnore = 0;
+    L1 = 1;
+    L2 = 2;
+    Dropout = 3;
+    RegularizationNone = 4;
+  }
+
+  // Learning rate
+  float learningRate = 1;
+  // Number of training epochs
+  int32 epochs = 2;
+
+  // number of epochs to run, and return state to UI
+  // Traning runs and pauses after epochBatch number of runs
+  // waiting for user input
+  int32 epochBatch = 3;
+
+  // Activation function type (e.g., "relu", "sigmoid", "tanh")
+  ActivationFunctionEnum activationFunction = 4;
+
+  // Regularization type (e.g., "l1", "l2", "dropout", "none")
+  RegularizationEnum regularization = 5;
+
+  // Regularization strength/coefficient
+  float regularizationRate = 6;
+
+  // current run state, the epoch iteration run which is currently running
+  int32 currentEpoch = 7;
+
+  // Current trainging state
+  TrainingStateEnum state = 8;
+  TrainingTypeEnum trainingType = 9;
+
+  float trainingLoss = 10;
+  float testLoss = 11;
+
+  // number of inputs
+  int32 numInputs = 12;
+
+  // number of outputs
+  int32 numOutpus = 13;
+
+  // number of hidden layers
+  int32 numLayers = 14;
+}

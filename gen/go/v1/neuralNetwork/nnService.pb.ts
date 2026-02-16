@@ -5,6 +5,15 @@
 */
 
 import * as fm from "../../fetch.pb"
+export type PingNeuralNetworkRequest = {
+}
+
+export type PingNeuralNetworkResponse = {
+  createdAt?: string
+  description?: string
+  data?: string
+}
+
 export type CreateNeuralNetworkRequest = {
 }
 
@@ -42,6 +51,9 @@ export type ListNeuralNetworkResponse = {
 }
 
 export class NeuralNetwork {
+  static Ping(req: PingNeuralNetworkRequest, initReq?: fm.InitReq): Promise<PingNeuralNetworkResponse> {
+    return fm.fetchReq<PingNeuralNetworkRequest, PingNeuralNetworkResponse>(`/v1/neuralNetwork/ping?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  }
   static Create(req: CreateNeuralNetworkRequest, initReq?: fm.InitReq): Promise<CreateNeuralNetworkResponse> {
     return fm.fetchReq<CreateNeuralNetworkRequest, CreateNeuralNetworkResponse>(`/v1/neuralNetwork/create`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }

@@ -71,7 +71,7 @@ func (nn *neuralNetwork) UpdateLinearParams(gradientM float64, gradientC float64
 
 func (nn *neuralNetwork) Train(xTrain []float64, yTrain []float64, xTest []float64, yTest []float64) {
 
-	graph := NewPlotter()
+	graph := NewPlotter("linearPlot.png")
 	graph.addPoints(xTrain, yTrain, color.RGBA{0, 0, 255, 255})
 	graph.addPoints(xTest, yTest, color.RGBA{0, 255, 0, 255})
 	graph.saveGraph()

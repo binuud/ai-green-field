@@ -45,6 +45,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoadNeuralNetworkResponse'
+  /v1/neuralNetwork/ping:
+    get:
+      operationId: ping
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.Ping response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PingNeuralNetworkResponse'
   /v1/neuralNetwork/save:
     post:
       operationId: save
@@ -99,6 +109,16 @@ components:
       type: object
     LoadNeuralNetworkResponse:
       type: object
+    PingNeuralNetworkResponse:
+      type: object
+      properties:
+        createdAt:
+          type: integer
+          format: int64
+        description:
+          type: string
+        data:
+          type: string
     SaveNeuralNetworkRequest:
       type: object
     SaveNeuralNetworkResponse:
@@ -109,3 +129,77 @@ components:
       type: object
     TrainNeuralNetworkResponse:
       type: object
+    TrainingState:
+      type: object
+      properties:
+        learningRate:
+          type: number
+          format: float
+        epochs:
+          type: integer
+          format: int32
+        epochBatch:
+          type: integer
+          format: int32
+        activationFunction:
+          $ref: '#/components/schemas/TrainingState.ActivationFunctionEnum'
+        regularization:
+          $ref: '#/components/schemas/TrainingState.RegularizationEnum'
+        regularizationRate:
+          type: number
+          format: float
+        currentEpoch:
+          type: integer
+          format: int32
+        state:
+          $ref: '#/components/schemas/TrainingState.TrainingStateEnum'
+        trainingType:
+          $ref: '#/components/schemas/TrainingState.TrainingTypeEnum'
+        trainingLoss:
+          type: number
+          format: float
+        testLoss:
+          type: number
+          format: float
+        numInputs:
+          type: integer
+          format: int32
+        numOutpus:
+          type: integer
+          format: int32
+        numLayers:
+          type: integer
+          format: int32
+    TrainingState.ActivationFunctionEnum:
+      type: string
+      enum:
+        - ActivationFunctionIgnore
+        - ActivationFunctionNone
+        - Relu
+        - Sigmoid
+        - Tanh
+        - Linear
+    TrainingState.RegularizationEnum:
+      type: string
+      enum:
+        - RegularizationIgnore
+        - L1
+        - L2
+        - Dropout
+        - RegularizationNone
+    TrainingState.TrainingStateEnum:
+      type: string
+      enum:
+        - TrainingStateIgnore
+        - New
+        - Running
+        - Error
+        - Pause
+        - Completed
+        - Stopped
+    TrainingState.TrainingTypeEnum:
+      type: string
+      enum:
+        - TrainingTypeIgnore
+        - Classification
+        - Regression

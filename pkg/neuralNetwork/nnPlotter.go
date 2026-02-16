@@ -11,11 +11,12 @@ import (
 )
 
 type nnPlotter struct {
+	Filename  string
 	GraphType string
 	plotter   *plot.Plot
 }
 
-func NewPlotter() *nnPlotter {
+func NewPlotter(Filename string) *nnPlotter {
 
 	// Create plot
 	p := plot.New()
@@ -24,6 +25,7 @@ func NewPlotter() *nnPlotter {
 	p.Y.Label.Text = "Y Values"
 
 	return &nnPlotter{
+		Filename:  Filename,
 		GraphType: "ScatterPlot",
 		plotter:   p,
 	}
@@ -51,7 +53,7 @@ func (p *nnPlotter) addPoints(xData []float64, yData []float64, plotColor color.
 func (p *nnPlotter) saveGraph() {
 
 	// Save as PNG
-	if err := p.plotter.Save(5*vg.Inch, 5*vg.Inch, "dotgraph.png"); err != nil {
+	if err := p.plotter.Save(5*vg.Inch, 5*vg.Inch, p.Filename); err != nil {
 		logrus.Fatal(err)
 	}
 

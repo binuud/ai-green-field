@@ -24,6 +24,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	NeuralNetwork_Ping_FullMethodName   = "/neuralNetwork.NeuralNetwork/Ping"
 	NeuralNetwork_Create_FullMethodName = "/neuralNetwork.NeuralNetwork/Create"
 	NeuralNetwork_Train_FullMethodName  = "/neuralNetwork.NeuralNetwork/Train"
 	NeuralNetwork_Test_FullMethodName   = "/neuralNetwork.NeuralNetwork/Test"
@@ -38,6 +39,7 @@ const (
 //
 // NeuralNetwork
 type NeuralNetworkClient interface {
+	Ping(ctx context.Context, in *PingNeuralNetworkRequest, opts ...grpc.CallOption) (*PingNeuralNetworkResponse, error)
 	// for adding a new brainFlow to the backend
 	Create(ctx context.Context, in *CreateNeuralNetworkRequest, opts ...grpc.CallOption) (*CreateNeuralNetworkResponse, error)
 	// for training a NeuralNetwork
@@ -58,6 +60,16 @@ type neuralNetworkClient struct {
 
 func NewNeuralNetworkClient(cc grpc.ClientConnInterface) NeuralNetworkClient {
 	return &neuralNetworkClient{cc}
+}
+
+func (c *neuralNetworkClient) Ping(ctx context.Context, in *PingNeuralNetworkRequest, opts ...grpc.CallOption) (*PingNeuralNetworkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PingNeuralNetworkResponse)
+	err := c.cc.Invoke(ctx, NeuralNetwork_Ping_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *neuralNetworkClient) Create(ctx context.Context, in *CreateNeuralNetworkRequest, opts ...grpc.CallOption) (*CreateNeuralNetworkResponse, error) {
@@ -126,6 +138,7 @@ func (c *neuralNetworkClient) List(ctx context.Context, in *ListNeuralNetworkReq
 //
 // NeuralNetwork
 type NeuralNetworkServer interface {
+	Ping(context.Context, *PingNeuralNetworkRequest) (*PingNeuralNetworkResponse, error)
 	// for adding a new brainFlow to the backend
 	Create(context.Context, *CreateNeuralNetworkRequest) (*CreateNeuralNetworkResponse, error)
 	// for training a NeuralNetwork
@@ -148,6 +161,9 @@ type NeuralNetworkServer interface {
 // pointer dereference when methods are called.
 type UnimplementedNeuralNetworkServer struct{}
 
+func (UnimplementedNeuralNetworkServer) Ping(context.Context, *PingNeuralNetworkRequest) (*PingNeuralNetworkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
 func (UnimplementedNeuralNetworkServer) Create(context.Context, *CreateNeuralNetworkRequest) (*CreateNeuralNetworkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
@@ -185,6 +201,24 @@ func RegisterNeuralNetworkServer(s grpc.ServiceRegistrar, srv NeuralNetworkServe
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&NeuralNetwork_ServiceDesc, srv)
+}
+
+func _NeuralNetwork_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PingNeuralNetworkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NeuralNetworkServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NeuralNetwork_Ping_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NeuralNetworkServer).Ping(ctx, req.(*PingNeuralNetworkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _NeuralNetwork_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -302,6 +336,10 @@ var NeuralNetwork_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "neuralNetwork.NeuralNetwork",
 	HandlerType: (*NeuralNetworkServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Ping",
+			Handler:    _NeuralNetwork_Ping_Handler,
+		},
 		{
 			MethodName: "Create",
 			Handler:    _NeuralNetwork_Create_Handler,

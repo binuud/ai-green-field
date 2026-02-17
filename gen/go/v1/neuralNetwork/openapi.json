@@ -168,10 +168,20 @@
   "components": {
     "schemas": {
       "CreateNeuralNetworkRequest": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/TrainingState"
+          }
+        }
       },
       "CreateNeuralNetworkResponse": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/TrainingState"
+          }
+        }
       },
       "ListNeuralNetworkResponse": {
         "type": "object"
@@ -186,8 +196,8 @@
         "type": "object",
         "properties": {
           "createdAt": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string",
+            "format": "date-time"
           },
           "description": {
             "type": "string"
@@ -215,6 +225,9 @@
       "TrainingState": {
         "type": "object",
         "properties": {
+          "uuid": {
+            "type": "string"
+          },
           "learningRate": {
             "type": "number",
             "format": "float"
@@ -236,13 +249,6 @@
           "regularizationRate": {
             "type": "number",
             "format": "float"
-          },
-          "currentEpoch": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "state": {
-            "$ref": "#/components/schemas/TrainingState.TrainingStateEnum"
           },
           "trainingType": {
             "$ref": "#/components/schemas/TrainingState.TrainingTypeEnum"
@@ -266,6 +272,21 @@
           "numLayers": {
             "type": "integer",
             "format": "int32"
+          },
+          "state": {
+            "$ref": "#/components/schemas/TrainingState.TrainingStateEnum"
+          },
+          "currentEpoch": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

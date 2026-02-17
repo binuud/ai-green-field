@@ -3,7 +3,9 @@ module github.com/binuud/ai-green-field
 go 1.24.1
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.7
+	github.com/rs/cors v1.11.1
 	github.com/sirupsen/logrus v1.9.4
 	gonum.org/v1/plot v0.16.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20260209200024-4cfbd4190f57

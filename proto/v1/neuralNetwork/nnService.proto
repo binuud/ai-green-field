@@ -8,6 +8,8 @@ package neuralNetwork;
 option go_package = "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork";
 
 import "google/api/annotations.proto";
+import "v1/neuralNetwork/neuralNetwork.proto";
+import "google/protobuf/timestamp.proto";
 
 // NeuralNetwork
 service NeuralNetwork {
@@ -66,7 +68,7 @@ message PingNeuralNetworkRequest {}
 message PingNeuralNetworkResponse {
 
   // ping response creation time
-  int64 createdAt = 1;
+  google.protobuf.Timestamp createdAt = 1;
 
   // small description about the service
   string description = 2;
@@ -75,8 +77,8 @@ message PingNeuralNetworkResponse {
   string data = 3;
 }
 
-message CreateNeuralNetworkRequest {}
-message CreateNeuralNetworkResponse {}
+message CreateNeuralNetworkRequest { TrainingState state = 1; }
+message CreateNeuralNetworkResponse { TrainingState state = 1; }
 
 message TrainNeuralNetworkRequest {}
 message TrainNeuralNetworkResponse {}

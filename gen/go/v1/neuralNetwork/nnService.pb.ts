@@ -5,19 +5,23 @@
 */
 
 import * as fm from "../../fetch.pb"
+import * as GoogleProtobufTimestamp from "../../google/protobuf/timestamp.pb"
+import * as NeuralNetworkNeuralNetwork from "./neuralNetwork.pb"
 export type PingNeuralNetworkRequest = {
 }
 
 export type PingNeuralNetworkResponse = {
-  createdAt?: string
+  createdAt?: GoogleProtobufTimestamp.Timestamp
   description?: string
   data?: string
 }
 
 export type CreateNeuralNetworkRequest = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type CreateNeuralNetworkResponse = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type TrainNeuralNetworkRequest = {

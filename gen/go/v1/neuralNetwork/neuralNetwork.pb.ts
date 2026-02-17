@@ -4,6 +4,8 @@
 * This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
 */
 
+import * as GoogleProtobufTimestamp from "../../google/protobuf/timestamp.pb"
+
 export enum TrainingStateTrainingTypeEnum {
   TrainingTypeIgnore = "TrainingTypeIgnore",
   Classification = "Classification",
@@ -38,18 +40,21 @@ export enum TrainingStateRegularizationEnum {
 }
 
 export type TrainingState = {
+  uuid?: string
   learningRate?: number
   epochs?: number
   epochBatch?: number
   activationFunction?: TrainingStateActivationFunctionEnum
   regularization?: TrainingStateRegularizationEnum
   regularizationRate?: number
-  currentEpoch?: number
-  state?: TrainingStateTrainingStateEnum
   trainingType?: TrainingStateTrainingTypeEnum
   trainingLoss?: number
   testLoss?: number
   numInputs?: number
   numOutputs?: number
   numLayers?: number
+  state?: TrainingStateTrainingStateEnum
+  currentEpoch?: number
+  createdAt?: GoogleProtobufTimestamp.Timestamp
+  updatedAt?: GoogleProtobufTimestamp.Timestamp
 }

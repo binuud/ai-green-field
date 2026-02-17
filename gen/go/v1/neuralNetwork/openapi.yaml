@@ -101,8 +101,14 @@ components:
   schemas:
     CreateNeuralNetworkRequest:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     CreateNeuralNetworkResponse:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     ListNeuralNetworkResponse:
       type: object
     LoadNeuralNetworkRequest:
@@ -113,8 +119,8 @@ components:
       type: object
       properties:
         createdAt:
-          type: integer
-          format: int64
+          type: string
+          format: date-time
         description:
           type: string
         data:
@@ -132,6 +138,8 @@ components:
     TrainingState:
       type: object
       properties:
+        uuid:
+          type: string
         learningRate:
           type: number
           format: float
@@ -148,11 +156,6 @@ components:
         regularizationRate:
           type: number
           format: float
-        currentEpoch:
-          type: integer
-          format: int32
-        state:
-          $ref: '#/components/schemas/TrainingState.TrainingStateEnum'
         trainingType:
           $ref: '#/components/schemas/TrainingState.TrainingTypeEnum'
         trainingLoss:
@@ -170,6 +173,17 @@ components:
         numLayers:
           type: integer
           format: int32
+        state:
+          $ref: '#/components/schemas/TrainingState.TrainingStateEnum'
+        currentEpoch:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     TrainingState.ActivationFunctionEnum:
       type: string
       enum:

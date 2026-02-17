@@ -56,6 +56,9 @@ protos: ## generate protos for neural network
 run-staging: ## run staging test
 	./scripts/runStaging.sh	
 
+run: ## run the nn server
+	./scripts/runNN.sh	
+
 test: ## Run tests
 	go test -v ./pkg/...
 

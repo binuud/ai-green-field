@@ -7,6 +7,8 @@ package neuralNetwork;
 
 option go_package = "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork";
 
+import "google/protobuf/timestamp.proto";
+
 message TrainingState {
 
   enum TrainingTypeEnum {
@@ -42,31 +44,29 @@ message TrainingState {
     RegularizationNone = 4;
   }
 
+  // uuid to keep track of different training runs
+  string uuid = 1;
+
   // Learning rate
-  float learningRate = 1;
+  float learningRate = 2;
   // Number of training epochs
-  int32 epochs = 2;
+  int32 epochs = 3;
 
   // number of epochs to run, and return state to UI
   // Traning runs and pauses after epochBatch number of runs
   // waiting for user input
-  int32 epochBatch = 3;
+  int32 epochBatch = 4;
 
   // Activation function type (e.g., "relu", "sigmoid", "tanh")
-  ActivationFunctionEnum activationFunction = 4;
+  ActivationFunctionEnum activationFunction = 5;
 
   // Regularization type (e.g., "l1", "l2", "dropout", "none")
-  RegularizationEnum regularization = 5;
+  RegularizationEnum regularization = 6;
 
   // Regularization strength/coefficient
-  float regularizationRate = 6;
+  float regularizationRate = 7;
 
-  // current run state, the epoch iteration run which is currently running
-  int32 currentEpoch = 7;
-
-  // Current trainging state
-  TrainingStateEnum state = 8;
-  TrainingTypeEnum trainingType = 9;
+  TrainingTypeEnum trainingType = 8;
 
   float trainingLoss = 10;
   float testLoss = 11;
@@ -79,4 +79,13 @@ message TrainingState {
 
   // number of hidden layers
   int32 numLayers = 14;
+
+  // Current training state
+  TrainingStateEnum state = 20;
+
+  // current run state, the epoch iteration run which is currently running
+  int32 currentEpoch = 21;
+
+  google.protobuf.Timestamp createdAt = 22;
+  google.protobuf.Timestamp updatedAt = 23;
 }

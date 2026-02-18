@@ -41,6 +41,7 @@ func main() {
 		Name:         "LinearRegression",
 		LearningRate: .01,
 		NumEpochs:    3000,
+		EpochBatch:   50,
 		Seed:         42.0,
 	})
 

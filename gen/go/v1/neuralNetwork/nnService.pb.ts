@@ -25,33 +25,52 @@ export type CreateNeuralNetworkResponse = {
 }
 
 export type TrainNeuralNetworkRequest = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type TrainNeuralNetworkResponse = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type TestNeuralNetworkRequest = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type TestNeuralNetworkResponse = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type LoadNeuralNetworkRequest = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type LoadNeuralNetworkResponse = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type SaveNeuralNetworkRequest = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type SaveNeuralNetworkResponse = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type ListNeuralNetworkRequest = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export type ListNeuralNetworkResponse = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
+}
+
+export type TestStreamNeuralNetworkRequest = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
+  action?: NeuralNetworkNeuralNetwork.TrainingAction
+}
+
+export type TestStreamNeuralNetworkResponse = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
 export class NeuralNetwork {

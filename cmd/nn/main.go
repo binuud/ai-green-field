@@ -42,14 +42,13 @@ func runHtppServer() {
 	gwMux := runtime.NewServeMux()
 
 	// Neural Network Service
+
 	err = nnProtoV1.RegisterNeuralNetworkHandler(ctx, gwMux, conn)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	httpMux := http.NewServeMux()
-	// attach mqtt bridge to the http mux
-	// this is a websocket
 
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
 

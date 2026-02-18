@@ -6,6 +6,13 @@
 
 import * as GoogleProtobufTimestamp from "../../google/protobuf/timestamp.pb"
 
+export enum TrainingActionTrainingActionEnum {
+  TrainingActionIgnore = "TrainingActionIgnore",
+  Start = "Start",
+  Pause = "Pause",
+  Stop = "Stop",
+}
+
 export enum TrainingStateTrainingTypeEnum {
   TrainingTypeIgnore = "TrainingTypeIgnore",
   Classification = "Classification",
@@ -37,6 +44,10 @@ export enum TrainingStateRegularizationEnum {
   L2 = "L2",
   Dropout = "Dropout",
   RegularizationNone = "RegularizationNone",
+}
+
+export type TrainingAction = {
+  action?: TrainingActionTrainingActionEnum
 }
 
 export type TrainingState = {

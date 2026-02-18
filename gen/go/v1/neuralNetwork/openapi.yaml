@@ -22,6 +22,87 @@ paths:
   /v1/neuralNetwork/list:
     get:
       operationId: list
+      parameters:
+        - name: state.activationFunction
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrainingState.ActivationFunctionEnum'
+        - name: state.createdAt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: state.currentEpoch
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.epochBatch
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.epochs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.learningRate
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: state.numInputs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.numLayers
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.numOutputs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.regularization
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrainingState.RegularizationEnum'
+        - name: state.regularizationRate
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: state.state
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrainingState.TrainingStateEnum'
+        - name: state.testLoss
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: state.trainingLoss
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: state.trainingType
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrainingState.TrainingTypeEnum'
+        - name: state.updatedAt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: state.uuid
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: neuralNetwork.NeuralNetwork.List response
@@ -71,9 +152,106 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SaveNeuralNetworkResponse'
+  /v1/neuralNetwork/testStream:
+    post:
+      operationId: testStream
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestStreamNeuralNetworkRequest'
+        required: true
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.TestStream response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestStreamNeuralNetworkResponse'
   /v1/neuralNetwork/train:
     get:
       operationId: train
+      parameters:
+        - name: state.activationFunction
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrainingState.ActivationFunctionEnum'
+        - name: state.createdAt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: state.currentEpoch
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.epochBatch
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.epochs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.learningRate
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: state.numInputs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.numLayers
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.numOutputs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: state.regularization
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrainingState.RegularizationEnum'
+        - name: state.regularizationRate
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: state.state
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrainingState.TrainingStateEnum'
+        - name: state.testLoss
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: state.trainingLoss
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: state.trainingType
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrainingState.TrainingTypeEnum'
+        - name: state.updatedAt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: state.uuid
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: neuralNetwork.NeuralNetwork.Train response
@@ -111,10 +289,19 @@ components:
           $ref: '#/components/schemas/TrainingState'
     ListNeuralNetworkResponse:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     LoadNeuralNetworkRequest:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     LoadNeuralNetworkResponse:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     PingNeuralNetworkResponse:
       type: object
       properties:
@@ -127,14 +314,53 @@ components:
           type: string
     SaveNeuralNetworkRequest:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     SaveNeuralNetworkResponse:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     TestNeuralNetworkRequest:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     TestNeuralNetworkResponse:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
+    TestStreamNeuralNetworkRequest:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
+        action:
+          $ref: '#/components/schemas/TrainingAction'
+    TestStreamNeuralNetworkResponse:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     TrainNeuralNetworkResponse:
       type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
+    TrainingAction:
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/TrainingAction.TrainingActionEnum'
+    TrainingAction.TrainingActionEnum:
+      type: string
+      enum:
+        - TrainingActionIgnore
+        - Start
+        - Pause
+        - Stop
     TrainingState:
       type: object
       properties:

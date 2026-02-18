@@ -9,6 +9,16 @@ option go_package = "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork";
 
 import "google/protobuf/timestamp.proto";
 
+message TrainingAction {
+  enum TrainingActionEnum {
+    TrainingActionIgnore = 0;
+    Start = 1;
+    Pause = 2;
+    Stop = 3;
+  }
+  TrainingActionEnum action = 1;
+}
+
 message TrainingState {
 
   enum TrainingTypeEnum {

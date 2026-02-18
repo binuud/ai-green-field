@@ -21,10 +21,13 @@ type NeuralNetworkConfig struct {
 	OutNeurons       int
 	HiddenNeurons    int
 	NumEpochs        int
+	EpochBatch       int    // number of epochs to run and return
 	Name             string // Name of the model
 	ModelFile        string // Name of the model file for loading and saving model
 	LearningRate     float64
 	Seed             int64
+	TestLoss         float64
+	TrainingLoss     float64
 	LinearRegression *linearRegressionModel
 }
 
@@ -78,19 +81,19 @@ func (nn *neuralNetwork) Train(xTrain []float64, yTrain []float64, xTest []float
 
 	p := nn.config.LinearRegression.Params
 
-	for i := 0; i < epochs; i++ {
+	for i := range epochs {
 
 		predicted := nn.Predict(xTrain)
 		// predicted := ApplyLinearEquation(xTrain, p.Weight, p.Bias)
-		loss := CalculateLoss(yTrain, predicted)
+		nn.config.TrainingLoss = CalculateLoss(yTrain, predicted)
 
 		gradM, gradC := CalculateGradients(xTrain, yTrain, predicted)
 		nn.UpdateLinearParams(gradM, gradC, lr)
 
-		if i%50 == 0 {
+		if i%nn.config.EpochBatch == 0 {
 			predictedTest := ApplyLinearEquation(xTest, p.Weight, p.Bias)
 			graph.addPoints(xTest, predictedTest, color.RGBA{255, 0, 0, 255})
-			fmt.Printf("\n Loss: %f Weight: %f Bias:%f", loss, p.Weight, p.Bias)
+			fmt.Printf("\n Loss: %f Weight: %f Bias:%f", nn.config.TrainingLoss, p.Weight, p.Bias)
 		}
 
 	}

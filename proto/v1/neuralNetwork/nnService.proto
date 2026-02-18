@@ -61,6 +61,15 @@ service NeuralNetwork {
       get : "/v1/neuralNetwork/list"
     };
   }
+
+  // for testing streaming NeuralNetwork
+  rpc TestStream(stream TestStreamNeuralNetworkRequest)
+      returns (stream TestStreamNeuralNetworkResponse) {
+    option (google.api.http) = {
+      post : "/v1/neuralNetwork/testStream"
+      body : "*"
+    };
+  }
 }
 
 message PingNeuralNetworkRequest {}
@@ -80,17 +89,23 @@ message PingNeuralNetworkResponse {
 message CreateNeuralNetworkRequest { TrainingState state = 1; }
 message CreateNeuralNetworkResponse { TrainingState state = 1; }
 
-message TrainNeuralNetworkRequest {}
-message TrainNeuralNetworkResponse {}
+message TrainNeuralNetworkRequest { TrainingState state = 1; }
+message TrainNeuralNetworkResponse { TrainingState state = 1; }
 
-message TestNeuralNetworkRequest {}
-message TestNeuralNetworkResponse {}
+message TestNeuralNetworkRequest { TrainingState state = 1; }
+message TestNeuralNetworkResponse { TrainingState state = 1; }
 
-message LoadNeuralNetworkRequest {}
-message LoadNeuralNetworkResponse {}
+message LoadNeuralNetworkRequest { TrainingState state = 1; }
+message LoadNeuralNetworkResponse { TrainingState state = 1; }
 
-message SaveNeuralNetworkRequest {}
-message SaveNeuralNetworkResponse {}
+message SaveNeuralNetworkRequest { TrainingState state = 1; }
+message SaveNeuralNetworkResponse { TrainingState state = 1; }
 
-message ListNeuralNetworkRequest {}
-message ListNeuralNetworkResponse {}
+message ListNeuralNetworkRequest { TrainingState state = 1; }
+message ListNeuralNetworkResponse { TrainingState state = 1; }
+
+message TestStreamNeuralNetworkRequest {
+  TrainingState state = 1;
+  TrainingAction action = 2;
+}
+message TestStreamNeuralNetworkResponse { TrainingState state = 1; }

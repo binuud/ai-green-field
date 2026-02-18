@@ -24,13 +24,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NeuralNetwork_Ping_FullMethodName   = "/neuralNetwork.NeuralNetwork/Ping"
-	NeuralNetwork_Create_FullMethodName = "/neuralNetwork.NeuralNetwork/Create"
-	NeuralNetwork_Train_FullMethodName  = "/neuralNetwork.NeuralNetwork/Train"
-	NeuralNetwork_Test_FullMethodName   = "/neuralNetwork.NeuralNetwork/Test"
-	NeuralNetwork_Load_FullMethodName   = "/neuralNetwork.NeuralNetwork/Load"
-	NeuralNetwork_Save_FullMethodName   = "/neuralNetwork.NeuralNetwork/Save"
-	NeuralNetwork_List_FullMethodName   = "/neuralNetwork.NeuralNetwork/List"
+	NeuralNetwork_Ping_FullMethodName       = "/neuralNetwork.NeuralNetwork/Ping"
+	NeuralNetwork_Create_FullMethodName     = "/neuralNetwork.NeuralNetwork/Create"
+	NeuralNetwork_Train_FullMethodName      = "/neuralNetwork.NeuralNetwork/Train"
+	NeuralNetwork_Test_FullMethodName       = "/neuralNetwork.NeuralNetwork/Test"
+	NeuralNetwork_Load_FullMethodName       = "/neuralNetwork.NeuralNetwork/Load"
+	NeuralNetwork_Save_FullMethodName       = "/neuralNetwork.NeuralNetwork/Save"
+	NeuralNetwork_List_FullMethodName       = "/neuralNetwork.NeuralNetwork/List"
+	NeuralNetwork_TestStream_FullMethodName = "/neuralNetwork.NeuralNetwork/TestStream"
 )
 
 // NeuralNetworkClient is the client API for NeuralNetwork service.
@@ -52,6 +53,8 @@ type NeuralNetworkClient interface {
 	Save(ctx context.Context, in *SaveNeuralNetworkRequest, opts ...grpc.CallOption) (*SaveNeuralNetworkResponse, error)
 	// for listing NeuralNetwork
 	List(ctx context.Context, in *ListNeuralNetworkRequest, opts ...grpc.CallOption) (*ListNeuralNetworkResponse, error)
+	// for testing streaming NeuralNetwork
+	TestStream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse], error)
 }
 
 type neuralNetworkClient struct {
@@ -132,6 +135,19 @@ func (c *neuralNetworkClient) List(ctx context.Context, in *ListNeuralNetworkReq
 	return out, nil
 }
 
+func (c *neuralNetworkClient) TestStream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &NeuralNetwork_ServiceDesc.Streams[0], NeuralNetwork_TestStream_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type NeuralNetwork_TestStreamClient = grpc.BidiStreamingClient[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse]
+
 // NeuralNetworkServer is the server API for NeuralNetwork service.
 // All implementations must embed UnimplementedNeuralNetworkServer
 // for forward compatibility.
@@ -151,6 +167,8 @@ type NeuralNetworkServer interface {
 	Save(context.Context, *SaveNeuralNetworkRequest) (*SaveNeuralNetworkResponse, error)
 	// for listing NeuralNetwork
 	List(context.Context, *ListNeuralNetworkRequest) (*ListNeuralNetworkResponse, error)
+	// for testing streaming NeuralNetwork
+	TestStream(grpc.BidiStreamingServer[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse]) error
 	mustEmbedUnimplementedNeuralNetworkServer()
 }
 
@@ -181,6 +199,9 @@ func (UnimplementedNeuralNetworkServer) Save(context.Context, *SaveNeuralNetwork
 }
 func (UnimplementedNeuralNetworkServer) List(context.Context, *ListNeuralNetworkRequest) (*ListNeuralNetworkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedNeuralNetworkServer) TestStream(grpc.BidiStreamingServer[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method TestStream not implemented")
 }
 func (UnimplementedNeuralNetworkServer) mustEmbedUnimplementedNeuralNetworkServer() {}
 func (UnimplementedNeuralNetworkServer) testEmbeddedByValue()                       {}
@@ -329,6 +350,13 @@ func _NeuralNetwork_List_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NeuralNetwork_TestStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(NeuralNetworkServer).TestStream(&grpc.GenericServerStream[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type NeuralNetwork_TestStreamServer = grpc.BidiStreamingServer[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse]
+
 // NeuralNetwork_ServiceDesc is the grpc.ServiceDesc for NeuralNetwork service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -365,6 +393,13 @@ var NeuralNetwork_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NeuralNetwork_List_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "TestStream",
+			Handler:       _NeuralNetwork_TestStream_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "v1/neuralNetwork/nnService.proto",
 }

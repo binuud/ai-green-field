@@ -51,6 +51,7 @@ func runHtppServer() {
 	httpMux := http.NewServeMux()
 
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
+	httpMux.HandleFunc("/ws", neuralnetworkserver.WebsocketHandler)
 
 	// Configure CORS options as needed
 	corsEnabledMux := cors.New(cors.Options{

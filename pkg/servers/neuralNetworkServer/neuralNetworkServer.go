@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"sync"
 	"time"
 
@@ -11,7 +12,11 @@ import (
 	bTensor "github.com/binuud/ai-green-field/pkg/bTensor"
 	nn "github.com/binuud/ai-green-field/pkg/neuralNetwork"
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -154,7 +159,7 @@ func (s *grpcNeuralnetworkserver) TestStream(stream protoV1.NeuralNetwork_TestSt
 		in, err := stream.Recv()
 		if err != nil {
 			log.Printf("recv error: %v", err)
-			// return err
+			return err
 		} else {
 			mu.Lock()
 			switch in.Action.Action {
@@ -180,4 +185,101 @@ func (s *grpcNeuralnetworkserver) Ping(ctx context.Context, in *protoV1.PingNeur
 	return &protoV1.PingNeuralNetworkResponse{
 		CreatedAt: timestamppb.New(time.Now()),
 	}, nil
+}
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool { return true }, // Allow all origins
+}
+
+// WebsocketHandler listens on a websocket and handles the bidirectional stream for the grpc server
+func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
+	// Upgrade the HTTP connection to a WebSocket
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Printf("\n Failed to upgrade websocket: %v", err)
+		return
+	}
+	defer ws.Close()
+
+	// Connect to gRPC server
+	grpcConn, err := grpc.NewClient(
+		"localhost:9090",
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithBlock(), // Wait for connection to be ready
+	)
+
+	if err != nil {
+		logrus.Errorf("Cannot dial grpc %v", err)
+		return
+	}
+	defer grpcConn.Close()
+
+	client := protoV1.NewNeuralNetworkClient(grpcConn)
+
+	// Create context with cancelation
+	ctx, cancel := context.WithCancel(r.Context())
+	defer cancel()
+
+	// Start gRPC stream
+	grpcStream, err := client.TestStream(ctx)
+	if err != nil {
+		logrus.Errorf("Cannot open TestStream %v", err)
+		return
+	}
+
+	var wg sync.WaitGroup
+
+	// Goroutine 1: Receive from gRPC stream → Send to WebSocket
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for {
+			outMsg, err := grpcStream.Recv()
+			if err != nil {
+				log.Printf("gRPC stream ended: %v", err)
+				return
+			}
+			logrus.Infof("Data grpc -> websocket: %+v\n", outMsg)
+			if err := ws.WriteJSON(outMsg); err != nil {
+				log.Printf("WebSocket write error: %v", err)
+				return
+			}
+		}
+	}()
+
+	// Goroutine 2: Receive from WebSocket → Send to gRPC stream
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		defer grpcStream.CloseSend()
+
+		for {
+
+			// Read message from WebSocket client
+			_, msg, err := ws.ReadMessage()
+			if err != nil {
+				logrus.Errorf("Read from websocket error: %v", err)
+				break
+			}
+
+			// read StreamRequest from websocket
+			var inMsg protoV1.TestStreamNeuralNetworkRequest
+			err = protojson.Unmarshal(msg, &inMsg)
+			// err = json.Unmarshal(msg, &data)
+			if err != nil {
+				logrus.Errorf("Error unmarshaling JSON: %v", err)
+				continue
+			}
+
+			// send via grpc client
+			logrus.Infof("Data websocket -> grpc: %+v\n", inMsg)
+			if err := grpcStream.Send(&inMsg); err != nil {
+				log.Printf("gRPC send error: %v", err)
+				return
+			}
+		}
+	}()
+
+	wg.Wait()
+
 }

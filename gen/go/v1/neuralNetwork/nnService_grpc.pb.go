@@ -24,14 +24,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NeuralNetwork_Ping_FullMethodName       = "/neuralNetwork.NeuralNetwork/Ping"
-	NeuralNetwork_Create_FullMethodName     = "/neuralNetwork.NeuralNetwork/Create"
-	NeuralNetwork_Train_FullMethodName      = "/neuralNetwork.NeuralNetwork/Train"
-	NeuralNetwork_Test_FullMethodName       = "/neuralNetwork.NeuralNetwork/Test"
-	NeuralNetwork_Load_FullMethodName       = "/neuralNetwork.NeuralNetwork/Load"
-	NeuralNetwork_Save_FullMethodName       = "/neuralNetwork.NeuralNetwork/Save"
-	NeuralNetwork_List_FullMethodName       = "/neuralNetwork.NeuralNetwork/List"
-	NeuralNetwork_TestStream_FullMethodName = "/neuralNetwork.NeuralNetwork/TestStream"
+	NeuralNetwork_Ping_FullMethodName             = "/neuralNetwork.NeuralNetwork/Ping"
+	NeuralNetwork_Create_FullMethodName           = "/neuralNetwork.NeuralNetwork/Create"
+	NeuralNetwork_Train_FullMethodName            = "/neuralNetwork.NeuralNetwork/Train"
+	NeuralNetwork_InteractiveTrain_FullMethodName = "/neuralNetwork.NeuralNetwork/InteractiveTrain"
+	NeuralNetwork_Test_FullMethodName             = "/neuralNetwork.NeuralNetwork/Test"
+	NeuralNetwork_Load_FullMethodName             = "/neuralNetwork.NeuralNetwork/Load"
+	NeuralNetwork_Save_FullMethodName             = "/neuralNetwork.NeuralNetwork/Save"
+	NeuralNetwork_List_FullMethodName             = "/neuralNetwork.NeuralNetwork/List"
+	NeuralNetwork_TestStream_FullMethodName       = "/neuralNetwork.NeuralNetwork/TestStream"
 )
 
 // NeuralNetworkClient is the client API for NeuralNetwork service.
@@ -45,6 +46,8 @@ type NeuralNetworkClient interface {
 	Create(ctx context.Context, in *CreateNeuralNetworkRequest, opts ...grpc.CallOption) (*CreateNeuralNetworkResponse, error)
 	// for training a NeuralNetwork
 	Train(ctx context.Context, in *TrainNeuralNetworkRequest, opts ...grpc.CallOption) (*TrainNeuralNetworkResponse, error)
+	// for training a neural network interactively for debud purpose
+	InteractiveTrain(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[InteractiveTrainNeuralNetworkRequest, InteractiveTrainNeuralNetworkResponse], error)
 	// for testing an exiting NeuralNetwork
 	Test(ctx context.Context, in *TestNeuralNetworkRequest, opts ...grpc.CallOption) (*TestNeuralNetworkResponse, error)
 	// for Loading a NeuralNetwork
@@ -95,6 +98,19 @@ func (c *neuralNetworkClient) Train(ctx context.Context, in *TrainNeuralNetworkR
 	return out, nil
 }
 
+func (c *neuralNetworkClient) InteractiveTrain(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[InteractiveTrainNeuralNetworkRequest, InteractiveTrainNeuralNetworkResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &NeuralNetwork_ServiceDesc.Streams[0], NeuralNetwork_InteractiveTrain_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[InteractiveTrainNeuralNetworkRequest, InteractiveTrainNeuralNetworkResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type NeuralNetwork_InteractiveTrainClient = grpc.BidiStreamingClient[InteractiveTrainNeuralNetworkRequest, InteractiveTrainNeuralNetworkResponse]
+
 func (c *neuralNetworkClient) Test(ctx context.Context, in *TestNeuralNetworkRequest, opts ...grpc.CallOption) (*TestNeuralNetworkResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TestNeuralNetworkResponse)
@@ -137,7 +153,7 @@ func (c *neuralNetworkClient) List(ctx context.Context, in *ListNeuralNetworkReq
 
 func (c *neuralNetworkClient) TestStream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[TestStreamNeuralNetworkRequest, TestStreamNeuralNetworkResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &NeuralNetwork_ServiceDesc.Streams[0], NeuralNetwork_TestStream_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &NeuralNetwork_ServiceDesc.Streams[1], NeuralNetwork_TestStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -159,6 +175,8 @@ type NeuralNetworkServer interface {
 	Create(context.Context, *CreateNeuralNetworkRequest) (*CreateNeuralNetworkResponse, error)
 	// for training a NeuralNetwork
 	Train(context.Context, *TrainNeuralNetworkRequest) (*TrainNeuralNetworkResponse, error)
+	// for training a neural network interactively for debud purpose
+	InteractiveTrain(grpc.BidiStreamingServer[InteractiveTrainNeuralNetworkRequest, InteractiveTrainNeuralNetworkResponse]) error
 	// for testing an exiting NeuralNetwork
 	Test(context.Context, *TestNeuralNetworkRequest) (*TestNeuralNetworkResponse, error)
 	// for Loading a NeuralNetwork
@@ -187,6 +205,9 @@ func (UnimplementedNeuralNetworkServer) Create(context.Context, *CreateNeuralNet
 }
 func (UnimplementedNeuralNetworkServer) Train(context.Context, *TrainNeuralNetworkRequest) (*TrainNeuralNetworkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Train not implemented")
+}
+func (UnimplementedNeuralNetworkServer) InteractiveTrain(grpc.BidiStreamingServer[InteractiveTrainNeuralNetworkRequest, InteractiveTrainNeuralNetworkResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method InteractiveTrain not implemented")
 }
 func (UnimplementedNeuralNetworkServer) Test(context.Context, *TestNeuralNetworkRequest) (*TestNeuralNetworkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
@@ -277,6 +298,13 @@ func _NeuralNetwork_Train_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	return interceptor(ctx, in, info, handler)
 }
+
+func _NeuralNetwork_InteractiveTrain_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(NeuralNetworkServer).InteractiveTrain(&grpc.GenericServerStream[InteractiveTrainNeuralNetworkRequest, InteractiveTrainNeuralNetworkResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type NeuralNetwork_InteractiveTrainServer = grpc.BidiStreamingServer[InteractiveTrainNeuralNetworkRequest, InteractiveTrainNeuralNetworkResponse]
 
 func _NeuralNetwork_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TestNeuralNetworkRequest)
@@ -394,6 +422,12 @@ var NeuralNetwork_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "InteractiveTrain",
+			Handler:       _NeuralNetwork_InteractiveTrain_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
 		{
 			StreamName:    "TestStream",
 			Handler:       _NeuralNetwork_TestStream_Handler,

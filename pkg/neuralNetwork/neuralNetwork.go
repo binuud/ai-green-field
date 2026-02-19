@@ -1,7 +1,6 @@
 package neuralNetwork
 
 import (
-	"fmt"
 	"image/color"
 
 	"github.com/sirupsen/logrus"
@@ -12,7 +11,7 @@ const (
 	epochs = 3000
 )
 
-type neuralNetwork struct {
+type NeuralNetwork struct {
 	config *NeuralNetworkConfig
 }
 
@@ -36,16 +35,16 @@ type LinearParams struct {
 	Bias   float64
 }
 
-func NewNeuralNetwork(config *NeuralNetworkConfig) *neuralNetwork {
+func NewNeuralNetwork(config *NeuralNetworkConfig) *NeuralNetwork {
 
 	linearRegression := NewLinearRegressionModel(config.Seed)
 	config.LinearRegression = linearRegression
 	logrus.Infof("\n Model details %v", config)
-	return &neuralNetwork{config: config}
+	return &NeuralNetwork{config: config}
 
 }
 
-func NewNeuralNetworkFromModel(ModelFile string) (error, *neuralNetwork) {
+func NewNeuralNetworkFromModel(ModelFile string) (error, *NeuralNetwork) {
 
 	err, config := loadFromModelFile(ModelFile)
 	if err != nil {
@@ -54,25 +53,25 @@ func NewNeuralNetworkFromModel(ModelFile string) (error, *neuralNetwork) {
 
 	logrus.Infof("\n Model details %v", config)
 
-	return nil, &neuralNetwork{config: config}
+	return nil, &NeuralNetwork{config: config}
 
 }
 
-func (nn *neuralNetwork) GetConfig() *NeuralNetworkConfig {
+func (nn *NeuralNetwork) GetConfig() *NeuralNetworkConfig {
 	return nn.config
 }
 
-func (nn *neuralNetwork) LogConfig() {
-	logrus.Infof("Model Config %#v", nn.config)
-	logrus.Infof("Linear Model%#v", nn.config.LinearRegression.Params)
+func (nn *NeuralNetwork) LogConfig() {
+	logrus.Infof("\n Model Config %#v", nn.config)
+	logrus.Infof("\n Linear Model%#v", nn.config.LinearRegression.Params)
 }
 
-func (nn *neuralNetwork) UpdateLinearParams(gradientM float64, gradientC float64, lr float64) {
+func (nn *NeuralNetwork) UpdateLinearParams(gradientM float64, gradientC float64, lr float64) {
 	nn.config.LinearRegression.Params.Weight -= lr * gradientM
 	nn.config.LinearRegression.Params.Bias -= lr * gradientC
 }
 
-func (nn *neuralNetwork) Train(xTrain []float64, yTrain []float64, xTest []float64, yTest []float64) {
+func (nn *NeuralNetwork) Train(xTrain []float64, yTrain []float64, xTest []float64, yTest []float64) {
 
 	graph := NewPlotter("linearPlot.png")
 	graph.addPoints(xTrain, yTrain, color.RGBA{0, 0, 255, 255})
@@ -93,7 +92,7 @@ func (nn *neuralNetwork) Train(xTrain []float64, yTrain []float64, xTest []float
 		if i%nn.config.EpochBatch == 0 {
 			predictedTest := ApplyLinearEquation(xTest, p.Weight, p.Bias)
 			graph.addPoints(xTest, predictedTest, color.RGBA{255, 0, 0, 255})
-			fmt.Printf("\n Loss: %f Weight: %f Bias:%f", nn.config.TrainingLoss, p.Weight, p.Bias)
+			logrus.Printf("\n Loss: %f Weight: %f Bias:%f", nn.config.TrainingLoss, p.Weight, p.Bias)
 		}
 
 	}
@@ -102,6 +101,24 @@ func (nn *neuralNetwork) Train(xTrain []float64, yTrain []float64, xTest []float
 
 }
 
-func (nn *neuralNetwork) Predict(testData []float64) []float64 {
+func (nn *NeuralNetwork) InteractiveTrain(xTrain []float64, yTrain []float64, xTest []float64, yTest []float64, epochBatch int) {
+
+	p := nn.config.LinearRegression.Params
+
+	for range epochBatch {
+
+		predicted := nn.Predict(xTrain)
+		// predicted := ApplyLinearEquation(xTrain, p.Weight, p.Bias)
+		nn.config.TrainingLoss = CalculateLoss(yTrain, predicted)
+
+		gradM, gradC := CalculateGradients(xTrain, yTrain, predicted)
+		nn.UpdateLinearParams(gradM, gradC, lr)
+
+	}
+	logrus.Printf("\n Loss: %f Weight: %f Bias:%f", nn.config.TrainingLoss, p.Weight, p.Bias)
+
+}
+
+func (nn *NeuralNetwork) Predict(testData []float64) []float64 {
 	return nn.config.LinearRegression.Forward(testData)
 }

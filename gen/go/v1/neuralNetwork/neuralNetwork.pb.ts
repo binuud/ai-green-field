@@ -8,6 +8,7 @@ import * as GoogleProtobufTimestamp from "../../google/protobuf/timestamp.pb"
 
 export enum TrainingActionTrainingActionEnum {
   TrainingActionIgnore = "TrainingActionIgnore",
+  New = "New",
   Start = "Start",
   Pause = "Pause",
   Stop = "Stop",

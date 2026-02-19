@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func (nn *neuralNetwork) GetFileName() string {
+func (nn *NeuralNetwork) GetFileName() string {
 	// if model file is set, use same
 	if len(nn.config.ModelFile) > 0 {
 		return nn.config.ModelFile
@@ -35,7 +35,7 @@ func loadFromModelFile(fileName string) (error, *NeuralNetworkConfig) {
 
 }
 
-func (nn *neuralNetwork) Save() error {
+func (nn *NeuralNetwork) Save() error {
 	f, err := os.Create(nn.GetFileName())
 	if err != nil {
 		return err

@@ -33,6 +33,16 @@ service NeuralNetwork {
       get : "/v1/neuralNetwork/train"
     };
   }
+
+  // for training a neural network interactively for debud purpose
+  rpc InteractiveTrain(stream InteractiveTrainNeuralNetworkRequest)
+      returns (stream InteractiveTrainNeuralNetworkResponse) {
+    option (google.api.http) = {
+      post : "/v1/neuralNetwork/interactiveTrain"
+      body : "*"
+    };
+  }
+
   // for testing an exiting NeuralNetwork
   rpc Test(TestNeuralNetworkRequest) returns (TestNeuralNetworkResponse) {
     option (google.api.http) = {
@@ -103,6 +113,13 @@ message SaveNeuralNetworkResponse { TrainingState state = 1; }
 
 message ListNeuralNetworkRequest { TrainingState state = 1; }
 message ListNeuralNetworkResponse { TrainingState state = 1; }
+
+message InteractiveTrainNeuralNetworkRequest {
+  TrainingState state = 1;
+  TrainingAction action = 2;
+}
+
+message InteractiveTrainNeuralNetworkResponse { TrainingState state = 1; }
 
 message TestStreamNeuralNetworkRequest {
   TrainingState state = 1;

@@ -19,6 +19,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateNeuralNetworkResponse'
+  /v1/neuralNetwork/interactiveTrain:
+    post:
+      operationId: interactiveTrain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractiveTrainNeuralNetworkRequest'
+        required: true
+      responses:
+        "200":
+          description: neuralNetwork.NeuralNetwork.InteractiveTrain response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractiveTrainNeuralNetworkResponse'
   /v1/neuralNetwork/list:
     get:
       operationId: list
@@ -287,6 +303,18 @@ components:
       properties:
         state:
           $ref: '#/components/schemas/TrainingState'
+    InteractiveTrainNeuralNetworkRequest:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
+        action:
+          $ref: '#/components/schemas/TrainingAction'
+    InteractiveTrainNeuralNetworkResponse:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/TrainingState'
     ListNeuralNetworkResponse:
       type: object
       properties:
@@ -358,6 +386,7 @@ components:
       type: string
       enum:
         - TrainingActionIgnore
+        - New
         - Start
         - Pause
         - Stop

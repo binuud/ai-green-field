@@ -109,6 +109,53 @@ func local_request_NeuralNetwork_Train_0(ctx context.Context, marshaler runtime.
 	return msg, metadata, err
 }
 
+func request_NeuralNetwork_InteractiveTrain_0(ctx context.Context, marshaler runtime.Marshaler, client NeuralNetworkClient, req *http.Request, pathParams map[string]string) (NeuralNetwork_InteractiveTrainClient, runtime.ServerMetadata, chan error, error) {
+	var metadata runtime.ServerMetadata
+	errChan := make(chan error, 1)
+	stream, err := client.InteractiveTrain(ctx)
+	if err != nil {
+		grpclog.Errorf("Failed to start streaming: %v", err)
+		close(errChan)
+		return nil, metadata, errChan, err
+	}
+	dec := marshaler.NewDecoder(req.Body)
+	handleSend := func() error {
+		var protoReq InteractiveTrainNeuralNetworkRequest
+		err := dec.Decode(&protoReq)
+		if errors.Is(err, io.EOF) {
+			return err
+		}
+		if err != nil {
+			grpclog.Errorf("Failed to decode request: %v", err)
+			return status.Errorf(codes.InvalidArgument, "Failed to decode request: %v", err)
+		}
+		if err := stream.Send(&protoReq); err != nil {
+			grpclog.Errorf("Failed to send request: %v", err)
+			return err
+		}
+		return nil
+	}
+	go func() {
+		defer close(errChan)
+		for {
+			if err := handleSend(); err != nil {
+				errChan <- err
+				break
+			}
+		}
+		if err := stream.CloseSend(); err != nil {
+			grpclog.Errorf("Failed to terminate client stream: %v", err)
+		}
+	}()
+	header, err := stream.Header()
+	if err != nil {
+		grpclog.Errorf("Failed to get header from client: %v", err)
+		return nil, metadata, errChan, err
+	}
+	metadata.HeaderMD = header
+	return stream, metadata, errChan, nil
+}
+
 func request_NeuralNetwork_Test_0(ctx context.Context, marshaler runtime.Marshaler, client NeuralNetworkClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq TestNeuralNetworkRequest
@@ -326,6 +373,13 @@ func RegisterNeuralNetworkHandlerServer(ctx context.Context, mux *runtime.ServeM
 		}
 		forward_NeuralNetwork_Train_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
+	mux.Handle(http.MethodPost, pattern_NeuralNetwork_InteractiveTrain_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
+		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+		return
+	})
 	mux.Handle(http.MethodPost, pattern_NeuralNetwork_Test_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -504,6 +558,31 @@ func RegisterNeuralNetworkHandlerClient(ctx context.Context, mux *runtime.ServeM
 		}
 		forward_NeuralNetwork_Train_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodPost, pattern_NeuralNetwork_InteractiveTrain_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/neuralNetwork.NeuralNetwork/InteractiveTrain", runtime.WithHTTPPathPattern("/v1/neuralNetwork/interactiveTrain"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		resp, md, reqErrChan, err := request_NeuralNetwork_InteractiveTrain_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		go func() {
+			for err := range reqErrChan {
+				if err != nil && !errors.Is(err, io.EOF) {
+					runtime.HTTPStreamError(annotatedContext, mux, outboundMarshaler, w, req, err)
+				}
+			}
+		}()
+		forward_NeuralNetwork_InteractiveTrain_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+	})
 	mux.Handle(http.MethodPost, pattern_NeuralNetwork_Test_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -601,23 +680,25 @@ func RegisterNeuralNetworkHandlerClient(ctx context.Context, mux *runtime.ServeM
 }
 
 var (
-	pattern_NeuralNetwork_Ping_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "ping"}, ""))
-	pattern_NeuralNetwork_Create_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "create"}, ""))
-	pattern_NeuralNetwork_Train_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "train"}, ""))
-	pattern_NeuralNetwork_Test_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "update"}, ""))
-	pattern_NeuralNetwork_Load_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "load"}, ""))
-	pattern_NeuralNetwork_Save_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "save"}, ""))
-	pattern_NeuralNetwork_List_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "list"}, ""))
-	pattern_NeuralNetwork_TestStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "testStream"}, ""))
+	pattern_NeuralNetwork_Ping_0             = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "ping"}, ""))
+	pattern_NeuralNetwork_Create_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "create"}, ""))
+	pattern_NeuralNetwork_Train_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "train"}, ""))
+	pattern_NeuralNetwork_InteractiveTrain_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "interactiveTrain"}, ""))
+	pattern_NeuralNetwork_Test_0             = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "update"}, ""))
+	pattern_NeuralNetwork_Load_0             = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "load"}, ""))
+	pattern_NeuralNetwork_Save_0             = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "save"}, ""))
+	pattern_NeuralNetwork_List_0             = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "list"}, ""))
+	pattern_NeuralNetwork_TestStream_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "neuralNetwork", "testStream"}, ""))
 )
 
 var (
-	forward_NeuralNetwork_Ping_0       = runtime.ForwardResponseMessage
-	forward_NeuralNetwork_Create_0     = runtime.ForwardResponseMessage
-	forward_NeuralNetwork_Train_0      = runtime.ForwardResponseMessage
-	forward_NeuralNetwork_Test_0       = runtime.ForwardResponseMessage
-	forward_NeuralNetwork_Load_0       = runtime.ForwardResponseMessage
-	forward_NeuralNetwork_Save_0       = runtime.ForwardResponseMessage
-	forward_NeuralNetwork_List_0       = runtime.ForwardResponseMessage
-	forward_NeuralNetwork_TestStream_0 = runtime.ForwardResponseStream
+	forward_NeuralNetwork_Ping_0             = runtime.ForwardResponseMessage
+	forward_NeuralNetwork_Create_0           = runtime.ForwardResponseMessage
+	forward_NeuralNetwork_Train_0            = runtime.ForwardResponseMessage
+	forward_NeuralNetwork_InteractiveTrain_0 = runtime.ForwardResponseStream
+	forward_NeuralNetwork_Test_0             = runtime.ForwardResponseMessage
+	forward_NeuralNetwork_Load_0             = runtime.ForwardResponseMessage
+	forward_NeuralNetwork_Save_0             = runtime.ForwardResponseMessage
+	forward_NeuralNetwork_List_0             = runtime.ForwardResponseMessage
+	forward_NeuralNetwork_TestStream_0       = runtime.ForwardResponseStream
 )

@@ -12,9 +12,10 @@ import "google/protobuf/timestamp.proto";
 message TrainingAction {
   enum TrainingActionEnum {
     TrainingActionIgnore = 0;
-    Start = 1;
-    Pause = 2;
-    Stop = 3;
+    New = 1;   // Starts training fresh, by resetting the models
+    Start = 2; // Starts from a previously paused position
+    Pause = 3; // Pauses the Training
+    Stop = 4;  // Stops the Training
   }
   TrainingActionEnum action = 1;
 }

@@ -64,6 +64,15 @@ export type ListNeuralNetworkResponse = {
   state?: NeuralNetworkNeuralNetwork.TrainingState
 }
 
+export type InteractiveTrainNeuralNetworkRequest = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
+  action?: NeuralNetworkNeuralNetwork.TrainingAction
+}
+
+export type InteractiveTrainNeuralNetworkResponse = {
+  state?: NeuralNetworkNeuralNetwork.TrainingState
+}
+
 export type TestStreamNeuralNetworkRequest = {
   state?: NeuralNetworkNeuralNetwork.TrainingState
   action?: NeuralNetworkNeuralNetwork.TrainingAction

@@ -1,8 +1,6 @@
 package neuralnetworkserver
 
 import (
-	"context"
-	"net/http"
 	"sync"
 	"time"
 
@@ -10,10 +8,29 @@ import (
 	bTensor "github.com/binuud/ai-green-field/pkg/bTensor"
 	nn "github.com/binuud/ai-green-field/pkg/neuralNetwork"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/encoding/protojson"
 )
+
+func (s *grpcNeuralnetworkserver) newTrainingState(inState *protoV1.TrainingState) *protoV1.TrainingState {
+
+	state := &protoV1.TrainingState{
+		State: protoV1.TrainingState_Pause,
+	}
+
+	state.State = protoV1.TrainingState_New
+	state.ActivationFunction = inState.ActivationFunction
+	state.CurrentEpoch = 0
+	state.EpochBatch = inState.EpochBatch
+	state.Epochs = inState.Epochs
+	state.LearningRate = inState.LearningRate
+	state.NumInputs = inState.NumInputs
+	state.NumLayers = inState.NumLayers
+	state.NumOutputs = inState.NumOutputs
+	state.Regularization = inState.Regularization
+	state.RegularizationRate = inState.RegularizationRate
+
+	return state
+
+}
 
 // InteractiveTrain method, for pausing and starting training and peeking and loss data during training
 // The model can be retuned too, for inspecting model changes via UI
@@ -62,23 +79,14 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 			logrus.Printf("recv error: %v", err)
 			return err
 		} else {
+
 			mu.Lock()
 			switch in.Action.Action {
+
 			case protoV1.TrainingAction_New:
 
 				logrus.Printf("\n Initializing training with fresh set (%v)", in.State)
-
-				state.State = protoV1.TrainingState_New
-				state.ActivationFunction = in.State.ActivationFunction
-				state.CurrentEpoch = 0
-				state.EpochBatch = in.State.EpochBatch
-				state.Epochs = in.State.Epochs
-				state.LearningRate = in.State.LearningRate
-				state.NumInputs = in.State.NumInputs
-				state.NumLayers = in.State.NumLayers
-				state.NumOutputs = in.State.NumOutputs
-				state.Regularization = in.State.Regularization
-				state.RegularizationRate = in.State.RegularizationRate
+				state = s.newTrainingState(in.State)
 
 				x = bTensor.NewFromArange(0.0, 1.0, 0.02)
 				logrus.Println("Result X:", x.Data[:10])
@@ -131,108 +139,17 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 				logrus.Println("Pausing training")
 				state.State = protoV1.TrainingState_Pause
 				logrus.Printf("Stream paused at number %d", currentNum)
+
 			case protoV1.TrainingAction_Stop:
 				state.State = protoV1.TrainingState_Stopped
 				logrus.Printf("Stream paused at number %d", currentNum)
+
 			default:
 				logrus.Printf("Unknown command: %s", in.Action.Action)
+
 			}
 			mu.Unlock()
 		}
 
 	}
-}
-
-// InteractiveTrainWebsocketHandler listens on a websocket and handles the bidirectional stream for the grpc server
-// this is for quickly testing any client, that supports bidirectional messages
-func InteractiveTrainWebsocketHandler(w http.ResponseWriter, r *http.Request) {
-	// Upgrade the HTTP connection to a WebSocket
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		logrus.Printf("\n Failed to upgrade websocket: %v", err)
-		return
-	}
-	defer ws.Close()
-
-	// Connect to gRPC server
-	grpcConn, err := grpc.NewClient(
-		"localhost:9090",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithBlock(), // Wait for connection to be ready
-	)
-
-	if err != nil {
-		logrus.Errorf("Cannot dial grpc %v", err)
-		return
-	}
-	defer grpcConn.Close()
-
-	client := protoV1.NewNeuralNetworkClient(grpcConn)
-
-	// Create context with cancelation
-	ctx, cancel := context.WithCancel(r.Context())
-	defer cancel()
-
-	// Start gRPC stream
-	grpcStream, err := client.InteractiveTrain(ctx)
-	if err != nil {
-		logrus.Errorf("Cannot open TestStream %v", err)
-		return
-	}
-
-	var wg sync.WaitGroup
-
-	// Goroutine 1: Receive from gRPC stream → Send to WebSocket
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for {
-			outMsg, err := grpcStream.Recv()
-			if err != nil {
-				logrus.Printf("gRPC stream ended: %v", err)
-				return
-			}
-			logrus.Infof("Data grpc -> websocket: %+v\n", outMsg)
-			if err := ws.WriteJSON(outMsg); err != nil {
-				logrus.Printf("WebSocket write error: %v", err)
-				return
-			}
-		}
-	}()
-
-	// Goroutine 2: Receive from WebSocket → Send to gRPC stream
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		defer grpcStream.CloseSend()
-
-		for {
-
-			// Read message from WebSocket client
-			_, msg, err := ws.ReadMessage()
-			if err != nil {
-				logrus.Errorf("Read from websocket error: %v", err)
-				break
-			}
-
-			// read StreamRequest from websocket
-			var inMsg protoV1.InteractiveTrainNeuralNetworkRequest
-			err = protojson.Unmarshal(msg, &inMsg)
-			// err = json.Unmarshal(msg, &data)
-			if err != nil {
-				logrus.Errorf("Error unmarshaling JSON: %v", err)
-				continue
-			}
-
-			// send via grpc client
-			logrus.Infof("Data websocket -> grpc: %+v\n", inMsg)
-			if err := grpcStream.Send(&inMsg); err != nil {
-				logrus.Printf("gRPC send error: %v", err)
-				return
-			}
-		}
-	}()
-
-	wg.Wait()
-
 }

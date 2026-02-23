@@ -17,69 +17,69 @@ export type PingNeuralNetworkResponse = {
 }
 
 export type CreateNeuralNetworkRequest = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type CreateNeuralNetworkResponse = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type TrainNeuralNetworkRequest = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type TrainNeuralNetworkResponse = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type TestNeuralNetworkRequest = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type TestNeuralNetworkResponse = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type LoadNeuralNetworkRequest = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type LoadNeuralNetworkResponse = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type SaveNeuralNetworkRequest = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type SaveNeuralNetworkResponse = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type ListNeuralNetworkRequest = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type ListNeuralNetworkResponse = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type InteractiveTrainNeuralNetworkRequest = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
   action?: NeuralNetworkNeuralNetwork.TrainingAction
 }
 
 export type InteractiveTrainNeuralNetworkResponse = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export type TestStreamNeuralNetworkRequest = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
   action?: NeuralNetworkNeuralNetwork.TrainingAction
 }
 
 export type TestStreamNeuralNetworkResponse = {
-  state?: NeuralNetworkNeuralNetwork.TrainingState
+  model?: NeuralNetworkNeuralNetwork.Model
 }
 
 export class NeuralNetwork {

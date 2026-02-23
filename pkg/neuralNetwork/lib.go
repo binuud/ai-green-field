@@ -2,12 +2,12 @@ package neuralNetwork
 
 import "math"
 
-func linearEquation(x float64, weight float64, bias float64) float64 {
+func linearEquation(x float32, weight float32, bias float32) float32 {
 	return (weight*x + bias)
 }
 
-func ApplyLinearEquation(xData []float64, weight float64, bias float64) []float64 {
-	result := make([]float64, len(xData))
+func ApplyLinearEquation(xData []float32, weight float32, bias float32) []float32 {
+	result := make([]float32, len(xData))
 	for i, x := range xData {
 		result[i] = linearEquation(x, weight, bias)
 	}
@@ -15,35 +15,35 @@ func ApplyLinearEquation(xData []float64, weight float64, bias float64) []float6
 }
 
 // MSE or Mean Squared Error
-func CalculateLoss(actuals []float64, predictions []float64) float64 {
+func CalculateLoss(actuals []float32, predictions []float32) float32 {
 	var diff float64
 	for i := range actuals {
 		d := predictions[i] - actuals[i]
-		diff += math.Pow(d, 2.0)
+		diff += math.Pow(float64(d), 2.0)
 	}
 	avergageLoss := diff / float64(len(actuals))
-	return avergageLoss
+	return float32(avergageLoss)
 }
 
-func CalcGradientWeight(orig_x []float64, orig_y []float64, predicted_y []float64) float64 {
-	var diff float64
+func CalcGradientWeight(orig_x []float32, orig_y []float32, predicted_y []float32) float32 {
+	var diff float32
 	for i, x := range orig_x {
 		diff += (predicted_y[i] - orig_y[i]) * x
 	}
-	return 2 * (diff / float64(len(orig_x)))
+	return float32(2 * (diff / float32(len(orig_x))))
 }
 
-func CalcGradientBias(orig []float64, predicted []float64) float64 {
+func CalcGradientBias(orig []float32, predicted []float32) float32 {
 
-	var diff float64
+	var diff float32
 	for i := range orig {
 		diff += (predicted[i] - orig[i])
 	}
-	return 2 * (diff / float64(len(orig)))
+	return float32(2 * (diff / float32(len(orig))))
 
 }
 
-func CalculateGradients(xTrain []float64, yTrain []float64, predicted []float64) (gradM float64, gradC float64) {
+func CalculateGradients(xTrain []float32, yTrain []float32, predicted []float32) (gradM float32, gradC float32) {
 
 	gradM = CalcGradientWeight(xTrain, yTrain, predicted)
 	gradC = CalcGradientBias(yTrain, predicted)

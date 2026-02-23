@@ -1,12 +1,12 @@
 package btensor
 
 type BTensor struct {
-	Data []float64
+	Data []float32
 	cols int
 	rows int
 }
 
-func NewFromArange(start, stop, step float64) *BTensor {
+func NewFromArange(start, stop, step float32) *BTensor {
 	data := Arange(start, stop, step)
 	bTensor := &BTensor{
 		Data: data,

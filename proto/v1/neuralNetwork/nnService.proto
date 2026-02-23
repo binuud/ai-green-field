@@ -96,33 +96,34 @@ message PingNeuralNetworkResponse {
   string data = 3;
 }
 
-message CreateNeuralNetworkRequest { TrainingState state = 1; }
-message CreateNeuralNetworkResponse { TrainingState state = 1; }
+message CreateNeuralNetworkRequest { Model model = 1; }
+message CreateNeuralNetworkResponse { Model model = 1; }
 
-message TrainNeuralNetworkRequest { TrainingState state = 1; }
-message TrainNeuralNetworkResponse { TrainingState state = 1; }
+message TrainNeuralNetworkRequest { Model model = 1; }
+message TrainNeuralNetworkResponse { Model model = 1; }
 
-message TestNeuralNetworkRequest { TrainingState state = 1; }
-message TestNeuralNetworkResponse { TrainingState state = 1; }
+message TestNeuralNetworkRequest { Model model = 1; }
+message TestNeuralNetworkResponse { Model model = 1; }
 
-message LoadNeuralNetworkRequest { TrainingState state = 1; }
-message LoadNeuralNetworkResponse { TrainingState state = 1; }
+message LoadNeuralNetworkRequest { Model model = 1; }
+message LoadNeuralNetworkResponse { Model model = 1; }
 
-message SaveNeuralNetworkRequest { TrainingState state = 1; }
-message SaveNeuralNetworkResponse { TrainingState state = 1; }
+message SaveNeuralNetworkRequest { Model model = 1; }
+message SaveNeuralNetworkResponse { Model model = 1; }
 
-message ListNeuralNetworkRequest { TrainingState state = 1; }
-message ListNeuralNetworkResponse { TrainingState state = 1; }
+message ListNeuralNetworkRequest { Model model = 1; }
+message ListNeuralNetworkResponse { Model model = 1; }
 
 message InteractiveTrainNeuralNetworkRequest {
-  TrainingState state = 1;
+  Model model = 1;
   TrainingAction action = 2;
 }
 
-message InteractiveTrainNeuralNetworkResponse { TrainingState state = 1; }
+message InteractiveTrainNeuralNetworkResponse { Model model = 1; }
 
 message TestStreamNeuralNetworkRequest {
-  TrainingState state = 1;
+  Model model = 1;
   TrainingAction action = 2;
 }
-message TestStreamNeuralNetworkResponse { TrainingState state = 1; }
+
+message TestStreamNeuralNetworkResponse { Model model = 1; }

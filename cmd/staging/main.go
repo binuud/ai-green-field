@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	protoV1 "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork"
 	bTensor "github.com/binuud/ai-green-field/pkg/bTensor"
 	nn "github.com/binuud/ai-green-field/pkg/neuralNetwork"
 	"github.com/sirupsen/logrus"
@@ -20,7 +21,7 @@ func main() {
 	x := bTensor.NewFromArange(0.0, 1.0, 0.02)
 	fmt.Println("Result X:", x.Data[:10])
 
-	actualLinearParams := &nn.LinearParams{
+	actualLinearParams := &protoV1.LinearRegressionModel{
 		Weight: 1.05,
 		Bias:   0.95,
 	}
@@ -37,10 +38,10 @@ func main() {
 	fmt.Printf("\n Test Data len %d, %d", len(xTest), len(yTest))
 
 	// create random training weights
-	model := nn.NewNeuralNetwork(&nn.NeuralNetworkConfig{
+	model := nn.NewNeuralNetwork(&protoV1.ModelConfig{
 		Name:         "LinearRegression",
 		LearningRate: .01,
-		NumEpochs:    3000,
+		Epochs:       3000,
 		EpochBatch:   50,
 		Seed:         42.0,
 	})

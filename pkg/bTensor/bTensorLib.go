@@ -6,11 +6,11 @@ func MakeSlice[T any](values ...T) []T {
 	return values
 }
 
-func Arange(start, stop, step float64) []float64 {
-	N := int(math.Ceil((stop - start) / step))
-	result := make([]float64, N)
+func Arange(start, stop, step float32) []float32 {
+	N := int(math.Ceil(float64((stop - start) / step)))
+	result := make([]float32, N)
 	for x := range result {
-		result[x] = start + step*float64(x)
+		result[x] = start + step*float32(x)
 	}
 	return result
 }

@@ -36,7 +36,11 @@ vendor: ## run vendor
 	go mod tidy
 	go mod vendor
 
-protos: ## generate protos for neural network
+protos: ## generate all protos
+	make proto-nn 
+	make proto-dataset
+
+proto-nn: ## generate protos for neural network
 	$(PROTOC) -I=./proto/.  \
 	--go_out=./gen/go/ \
 	--go_opt paths=source_relative \
@@ -52,6 +56,23 @@ protos: ## generate protos for neural network
 	proto/v1/neuralNetwork/neuralNetwork.proto	\
 	proto/v1/neuralNetwork/nnService.proto 
 	yq eval ./gen/go/v1/neuralNetwork/openapi.yaml -o=json -P > ./gen/go/v1/neuralNetwork/openapi.json
+
+proto-dataset: ## generate protos for dataset
+	$(PROTOC) -I=./proto/.  \
+	--go_out=./gen/go/ \
+	--go_opt paths=source_relative \
+	--go-grpc_out=./gen/go/ \
+	--go-grpc_opt paths=source_relative \
+	--grpc-gateway_out=./gen/go/ \
+	--grpc-gateway_opt paths=source_relative \
+	--grpc-gateway_opt generate_unbound_methods=true \
+	--grpc-gateway-ts_out=./gen/go/ \
+	--grpc-gateway-ts_opt paths=source_relative \
+	--grpc-gateway-ts_opt generate_unbound_methods=true \
+	--oas_out ./gen/go/v1/dataset/ \
+	proto/v1/dataset/dataset.proto	\
+	proto/v1/dataset/datasetService.proto 
+	yq eval ./gen/go/v1/dataset/openapi.yaml -o=json -P > ./gen/go/v1/dataset/openapi.json
 
 run-staging: ## run staging test
 	./scripts/runStaging.sh	

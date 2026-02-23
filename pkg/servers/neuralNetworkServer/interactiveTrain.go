@@ -10,25 +10,30 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (s *grpcNeuralnetworkserver) newTrainingState(inState *protoV1.TrainingState) *protoV1.TrainingState {
+func (s *grpcNeuralnetworkserver) newTrainingState(inConfig *protoV1.ModelConfig) *protoV1.Model {
 
-	state := &protoV1.TrainingState{
-		State: protoV1.TrainingState_Pause,
+	state := &protoV1.ModelState{
+		Status:       protoV1.ModelState_Pause,
+		CurrentEpoch: 0,
 	}
 
-	state.State = protoV1.TrainingState_New
-	state.ActivationFunction = inState.ActivationFunction
-	state.CurrentEpoch = 0
-	state.EpochBatch = inState.EpochBatch
-	state.Epochs = inState.Epochs
-	state.LearningRate = inState.LearningRate
-	state.NumInputs = inState.NumInputs
-	state.NumLayers = inState.NumLayers
-	state.NumOutputs = inState.NumOutputs
-	state.Regularization = inState.Regularization
-	state.RegularizationRate = inState.RegularizationRate
+	config := &protoV1.ModelConfig{
+		Name:               inConfig.Name,
+		ActivationFunction: inConfig.ActivationFunction,
+		EpochBatch:         inConfig.EpochBatch,
+		Epochs:             inConfig.Epochs,
+		LearningRate:       inConfig.LearningRate,
+		NumInputs:          inConfig.NumInputs,
+		NumLayers:          inConfig.NumLayers,
+		NumOutputs:         inConfig.NumOutputs,
+		Regularization:     inConfig.Regularization,
+		RegularizationRate: inConfig.RegularizationRate,
+	}
 
-	return state
+	return &protoV1.Model{
+		State:  state,
+		Config: config,
+	}
 
 }
 
@@ -37,15 +42,13 @@ func (s *grpcNeuralnetworkserver) newTrainingState(inState *protoV1.TrainingStat
 func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_InteractiveTrainServer) error {
 
 	var (
-		currentNum = 1
-		mu         sync.Mutex
-		state      = &protoV1.TrainingState{
-			State: protoV1.TrainingState_Pause,
-		}
+		currentNum                   = 1
+		mu                           sync.Mutex
+		model                        = &protoV1.Model{}
 		x                            *bTensor.BTensor
-		y                            []float64
-		xTrain, yTrain, xTest, yTest []float64
-		model                        *nn.NeuralNetwork
+		y                            []float32
+		xTrain, yTrain, xTest, yTest []float32
+		nnModel                      *nn.NeuralNetwork
 	)
 
 	// Goroutine to handle continuous streaming of training state, when its running
@@ -56,9 +59,9 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 		for {
 			mu.Lock()
 			// send updates every 1000 msec, only if the training is in running state
-			if state.State == protoV1.TrainingState_Running {
+			if model.State.Status == protoV1.ModelState_Running {
 				resp := &protoV1.InteractiveTrainNeuralNetworkResponse{
-					State: state,
+					Model: model,
 				}
 				if err := stream.Send(resp); err != nil {
 					logrus.Printf("send error: %v", err)
@@ -85,13 +88,13 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 
 			case protoV1.TrainingAction_New:
 
-				logrus.Printf("\n Initializing training with fresh set (%v)", in.State)
-				state = s.newTrainingState(in.State)
+				logrus.Printf("\n Initializing training with fresh set (%v)", in.Model)
+				model = s.newTrainingState(in.Model.Config)
 
 				x = bTensor.NewFromArange(0.0, 1.0, 0.02)
 				logrus.Println("Result X:", x.Data[:10])
 
-				actualLinearParams := &nn.LinearParams{
+				actualLinearParams := &protoV1.LinearRegressionModel{
 					Weight: 1.05,
 					Bias:   0.95,
 				}
@@ -108,40 +111,30 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 				logrus.Printf("\n Test Data len %d, %d", len(xTest), len(yTest))
 
 				// create random training weights
-				model = nn.NewNeuralNetwork(&nn.NeuralNetworkConfig{
-					Name:          "LinearRegression",
-					LearningRate:  float64(state.LearningRate),
-					NumEpochs:     int(state.Epochs),
-					EpochBatch:    int(state.EpochBatch),
-					InNeurons:     int(state.NumInputs),
-					OutNeurons:    int(state.NumOutputs),
-					HiddenNeurons: int(state.NumLayers),
-					Seed:          42.0,
-				})
-
-				model.LogConfig()
+				nnModel = nn.NewNeuralNetwork(model.Config)
+				nnModel.LogConfig()
 
 			case protoV1.TrainingAction_Start:
 
 				logrus.Println("Starting training")
-				state.State = protoV1.TrainingState_Running
-				model.LogConfig()
-				model.InteractiveTrain(xTrain, yTrain, xTest, yTest, int(state.EpochBatch))
-				model.LogConfig()
-				state.CurrentEpoch += state.EpochBatch
-				if state.CurrentEpoch >= state.Epochs {
-					state.State = protoV1.TrainingState_Completed
+				model.State.Status = protoV1.ModelState_Running
+				nnModel.LogConfig()
+				nnModel.InteractiveTrain(xTrain, yTrain, xTest, yTest)
+				nnModel.LogConfig()
+				model.State.CurrentEpoch += model.Config.EpochBatch
+				if model.State.CurrentEpoch >= model.Config.EpochBatch {
+					model.State.Status = protoV1.ModelState_Completed
 				} else {
-					state.State = protoV1.TrainingState_Pause
+					model.State.Status = protoV1.ModelState_Pause
 				}
 
 			case protoV1.TrainingAction_Pause:
 				logrus.Println("Pausing training")
-				state.State = protoV1.TrainingState_Pause
+				model.State.Status = protoV1.ModelState_Pause
 				logrus.Printf("Stream paused at number %d", currentNum)
 
 			case protoV1.TrainingAction_Stop:
-				state.State = protoV1.TrainingState_Stopped
+				model.State.Status = protoV1.ModelState_Stopped
 				logrus.Printf("Stream paused at number %d", currentNum)
 
 			default:

@@ -1,0 +1,83 @@
+openapi: 3.1.0
+info:
+  title: ""
+  version: ""
+paths:
+  /v1/dataset/get:
+    get:
+      operationId: get
+      responses:
+        "200":
+          description: dataset.DatasetService.Get response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDatasetResponse'
+  /v1/dataset/list:
+    get:
+      operationId: list
+      responses:
+        "200":
+          description: dataset.DatasetService.List response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDatasetResponse'
+  /v1/dataset/ping:
+    get:
+      operationId: ping
+      responses:
+        "200":
+          description: dataset.DatasetService.Ping response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PingDatasetResponse'
+components:
+  schemas:
+    Dataset:
+      type: object
+      properties:
+        uuid:
+          type: string
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/Dataset.TrainingDataTypeEnum'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Dataset.TrainingDataTypeEnum:
+      type: string
+      enum:
+        - TrainingDataTypeIgnore
+        - LinearEquation
+        - Audio
+        - Image
+        - Video
+        - Text
+    GetDatasetResponse:
+      type: object
+      properties:
+        dataset:
+          $ref: '#/components/schemas/Dataset'
+    ListDatasetResponse:
+      type: object
+      properties:
+        datasets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dataset'
+    PingDatasetResponse:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        description:
+          type: string
+        data:
+          type: string

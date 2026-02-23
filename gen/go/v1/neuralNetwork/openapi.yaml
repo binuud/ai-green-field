@@ -39,83 +39,106 @@ paths:
     get:
       operationId: list
       parameters:
-        - name: state.activationFunction
+        - name: model.config.activationFunction
           in: query
           schema:
-            $ref: '#/components/schemas/TrainingState.ActivationFunctionEnum'
-        - name: state.createdAt
+            $ref: '#/components/schemas/ModelConfig.ActivationFunctionEnum'
+        - name: model.config.description
+          in: query
+          schema:
+            type: string
+        - name: model.config.epochBatch
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.epochs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.learningRate
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: model.config.name
+          in: query
+          schema:
+            type: string
+        - name: model.config.numInputs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.numLayers
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.numOutputs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.regularization
+          in: query
+          schema:
+            $ref: '#/components/schemas/ModelConfig.RegularizationEnum'
+        - name: model.config.regularizationRate
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: model.config.seed
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: model.config.trainingType
+          in: query
+          schema:
+            $ref: '#/components/schemas/ModelConfig.ModelTypeEnum'
+        - name: model.linearModel.Bias
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: model.linearModel.Weight
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: model.state.createdAt
           in: query
           schema:
             type: string
             format: date-time
-        - name: state.currentEpoch
+        - name: model.state.currentEpoch
           in: query
           schema:
             type: integer
             format: int32
-        - name: state.epochBatch
+        - name: model.state.status
           in: query
           schema:
-            type: integer
-            format: int32
-        - name: state.epochs
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: state.learningRate
+            $ref: '#/components/schemas/ModelState.TrainingStateEnum'
+        - name: model.state.testLoss
           in: query
           schema:
             type: number
             format: float
-        - name: state.numInputs
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: state.numLayers
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: state.numOutputs
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: state.regularization
-          in: query
-          schema:
-            $ref: '#/components/schemas/TrainingState.RegularizationEnum'
-        - name: state.regularizationRate
+        - name: model.state.trainingLoss
           in: query
           schema:
             type: number
             format: float
-        - name: state.state
-          in: query
-          schema:
-            $ref: '#/components/schemas/TrainingState.TrainingStateEnum'
-        - name: state.testLoss
-          in: query
-          schema:
-            type: number
-            format: float
-        - name: state.trainingLoss
-          in: query
-          schema:
-            type: number
-            format: float
-        - name: state.trainingType
-          in: query
-          schema:
-            $ref: '#/components/schemas/TrainingState.TrainingTypeEnum'
-        - name: state.updatedAt
+        - name: model.state.updatedAt
           in: query
           schema:
             type: string
             format: date-time
-        - name: state.uuid
+        - name: model.uuid
           in: query
           schema:
             type: string
@@ -188,83 +211,106 @@ paths:
     get:
       operationId: train
       parameters:
-        - name: state.activationFunction
+        - name: model.config.activationFunction
           in: query
           schema:
-            $ref: '#/components/schemas/TrainingState.ActivationFunctionEnum'
-        - name: state.createdAt
+            $ref: '#/components/schemas/ModelConfig.ActivationFunctionEnum'
+        - name: model.config.description
+          in: query
+          schema:
+            type: string
+        - name: model.config.epochBatch
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.epochs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.learningRate
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: model.config.name
+          in: query
+          schema:
+            type: string
+        - name: model.config.numInputs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.numLayers
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.numOutputs
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: model.config.regularization
+          in: query
+          schema:
+            $ref: '#/components/schemas/ModelConfig.RegularizationEnum'
+        - name: model.config.regularizationRate
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: model.config.seed
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: model.config.trainingType
+          in: query
+          schema:
+            $ref: '#/components/schemas/ModelConfig.ModelTypeEnum'
+        - name: model.linearModel.Bias
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: model.linearModel.Weight
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: model.state.createdAt
           in: query
           schema:
             type: string
             format: date-time
-        - name: state.currentEpoch
+        - name: model.state.currentEpoch
           in: query
           schema:
             type: integer
             format: int32
-        - name: state.epochBatch
+        - name: model.state.status
           in: query
           schema:
-            type: integer
-            format: int32
-        - name: state.epochs
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: state.learningRate
+            $ref: '#/components/schemas/ModelState.TrainingStateEnum'
+        - name: model.state.testLoss
           in: query
           schema:
             type: number
             format: float
-        - name: state.numInputs
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: state.numLayers
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: state.numOutputs
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: state.regularization
-          in: query
-          schema:
-            $ref: '#/components/schemas/TrainingState.RegularizationEnum'
-        - name: state.regularizationRate
+        - name: model.state.trainingLoss
           in: query
           schema:
             type: number
             format: float
-        - name: state.state
-          in: query
-          schema:
-            $ref: '#/components/schemas/TrainingState.TrainingStateEnum'
-        - name: state.testLoss
-          in: query
-          schema:
-            type: number
-            format: float
-        - name: state.trainingLoss
-          in: query
-          schema:
-            type: number
-            format: float
-        - name: state.trainingType
-          in: query
-          schema:
-            $ref: '#/components/schemas/TrainingState.TrainingTypeEnum'
-        - name: state.updatedAt
+        - name: model.state.updatedAt
           in: query
           schema:
             type: string
             format: date-time
-        - name: state.uuid
+        - name: model.uuid
           in: query
           schema:
             type: string
@@ -296,40 +342,150 @@ components:
     CreateNeuralNetworkRequest:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     CreateNeuralNetworkResponse:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     InteractiveTrainNeuralNetworkRequest:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
         action:
           $ref: '#/components/schemas/TrainingAction'
     InteractiveTrainNeuralNetworkResponse:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
+    LinearRegressionModel:
+      type: object
+      properties:
+        Weight:
+          type: number
+          format: float
+        Bias:
+          type: number
+          format: float
     ListNeuralNetworkResponse:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     LoadNeuralNetworkRequest:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     LoadNeuralNetworkResponse:
       type: object
       properties:
+        model:
+          $ref: '#/components/schemas/Model'
+    Model:
+      type: object
+      properties:
+        uuid:
+          type: string
         state:
-          $ref: '#/components/schemas/TrainingState'
+          $ref: '#/components/schemas/ModelState'
+        config:
+          $ref: '#/components/schemas/ModelConfig'
+        linearModel:
+          $ref: '#/components/schemas/LinearRegressionModel'
+    ModelConfig:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        learningRate:
+          type: number
+          format: float
+        epochs:
+          type: integer
+          format: int32
+        epochBatch:
+          type: integer
+          format: int32
+        activationFunction:
+          $ref: '#/components/schemas/ModelConfig.ActivationFunctionEnum'
+        regularization:
+          $ref: '#/components/schemas/ModelConfig.RegularizationEnum'
+        regularizationRate:
+          type: number
+          format: float
+        trainingType:
+          $ref: '#/components/schemas/ModelConfig.ModelTypeEnum'
+        seed:
+          type: integer
+          format: int64
+        numInputs:
+          type: integer
+          format: int32
+        numOutputs:
+          type: integer
+          format: int32
+        numLayers:
+          type: integer
+          format: int32
+    ModelConfig.ActivationFunctionEnum:
+      type: string
+      enum:
+        - ActivationFunctionIgnore
+        - ActivationFunctionNone
+        - Relu
+        - Sigmoid
+        - Tanh
+        - Linear
+    ModelConfig.ModelTypeEnum:
+      type: string
+      enum:
+        - ModelTypeIgnore
+        - Classification
+        - Regression
+    ModelConfig.RegularizationEnum:
+      type: string
+      enum:
+        - RegularizationIgnore
+        - L1
+        - L2
+        - Dropout
+        - RegularizationNone
+    ModelState:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ModelState.TrainingStateEnum'
+        currentEpoch:
+          type: integer
+          format: int32
+        trainingLoss:
+          type: number
+          format: float
+        testLoss:
+          type: number
+          format: float
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ModelState.TrainingStateEnum:
+      type: string
+      enum:
+        - TrainingStateIgnore
+        - New
+        - Running
+        - Error
+        - Pause
+        - Completed
+        - Stopped
     PingNeuralNetworkResponse:
       type: object
       properties:
@@ -343,40 +499,40 @@ components:
     SaveNeuralNetworkRequest:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     SaveNeuralNetworkResponse:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     TestNeuralNetworkRequest:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     TestNeuralNetworkResponse:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     TestStreamNeuralNetworkRequest:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
         action:
           $ref: '#/components/schemas/TrainingAction'
     TestStreamNeuralNetworkResponse:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     TrainNeuralNetworkResponse:
       type: object
       properties:
-        state:
-          $ref: '#/components/schemas/TrainingState'
+        model:
+          $ref: '#/components/schemas/Model'
     TrainingAction:
       type: object
       properties:
@@ -390,85 +546,3 @@ components:
         - Start
         - Pause
         - Stop
-    TrainingState:
-      type: object
-      properties:
-        uuid:
-          type: string
-        learningRate:
-          type: number
-          format: float
-        epochs:
-          type: integer
-          format: int32
-        epochBatch:
-          type: integer
-          format: int32
-        activationFunction:
-          $ref: '#/components/schemas/TrainingState.ActivationFunctionEnum'
-        regularization:
-          $ref: '#/components/schemas/TrainingState.RegularizationEnum'
-        regularizationRate:
-          type: number
-          format: float
-        trainingType:
-          $ref: '#/components/schemas/TrainingState.TrainingTypeEnum'
-        trainingLoss:
-          type: number
-          format: float
-        testLoss:
-          type: number
-          format: float
-        numInputs:
-          type: integer
-          format: int32
-        numOutputs:
-          type: integer
-          format: int32
-        numLayers:
-          type: integer
-          format: int32
-        state:
-          $ref: '#/components/schemas/TrainingState.TrainingStateEnum'
-        currentEpoch:
-          type: integer
-          format: int32
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-    TrainingState.ActivationFunctionEnum:
-      type: string
-      enum:
-        - ActivationFunctionIgnore
-        - ActivationFunctionNone
-        - Relu
-        - Sigmoid
-        - Tanh
-        - Linear
-    TrainingState.RegularizationEnum:
-      type: string
-      enum:
-        - RegularizationIgnore
-        - L1
-        - L2
-        - Dropout
-        - RegularizationNone
-    TrainingState.TrainingStateEnum:
-      type: string
-      enum:
-        - TrainingStateIgnore
-        - New
-        - Running
-        - Error
-        - Pause
-        - Completed
-        - Stopped
-    TrainingState.TrainingTypeEnum:
-      type: string
-      enum:
-        - TrainingTypeIgnore
-        - Classification
-        - Regression

@@ -2,6 +2,7 @@ package neuralnetworkserver
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"sync"
 
@@ -62,8 +63,16 @@ func InteractiveTrainWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 				logrus.Printf("gRPC stream ended: %v", err)
 				return
 			}
+			outStr, err := protojson.Marshal(outMsg)
+			if err != nil {
+				logrus.Printf("Cannot marshall InteractiveTrainNeuralNetworkResponse to string: %v", err)
+				return
+			}
 			logrus.Infof("Data grpc -> websocket: %+v\n", outMsg)
-			if err := ws.WriteJSON(outMsg); err != nil {
+			// writeJSON emits enum as integers
+			// this breaks the parsing at the UI end
+			// DO NOT CHANGE, by binu.
+			if err := ws.WriteMessage(1, outStr); err != nil {
 				logrus.Printf("WebSocket write error: %v", err)
 				return
 			}
@@ -84,14 +93,18 @@ func InteractiveTrainWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 				logrus.Errorf("Read from websocket error: %v", err)
 				break
 			}
-
+			logrus.Infof("Parsing %s", msg)
 			// read StreamRequest from websocket
 			var inMsg protoV1.InteractiveTrainNeuralNetworkRequest
 			err = protojson.Unmarshal(msg, &inMsg)
-			// err = json.Unmarshal(msg, &data)
+			// err = json.Unmarshal(msg, &inMsg)
 			if err != nil {
-				logrus.Errorf("Error unmarshaling JSON: %v", err)
-				continue
+				logrus.Errorf("Error unmarshaling InteractiveTrainNeuralNetworkRequest protojson: %v", err)
+
+				err = json.Unmarshal(msg, &inMsg)
+				if err != nil {
+					logrus.Errorf("Error unmarshaling InteractiveTrainNeuralNetworkRequest json: %v", err)
+				}
 			}
 
 			// send via grpc client

@@ -35,7 +35,7 @@ func Test_NN_SaveLoad(t *testing.T) {
 	}
 
 	// test model load
-	newModel, err := NewNeuralNetworkFromModel(filename)
+	newModel, err := NewNeuralNetworkFromModelFile(filename)
 	if err != nil {
 		t.Errorf("Cannot load model from saved file")
 	}

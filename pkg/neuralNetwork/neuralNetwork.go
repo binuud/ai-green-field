@@ -35,7 +35,17 @@ func NewNeuralNetwork(config *protoV1.ModelConfig) *NeuralNetwork {
 
 }
 
-func NewNeuralNetworkFromModel(ModelFile string) (*NeuralNetwork, error) {
+func NewNeuralNetworkFromModel(model *protoV1.Model) *NeuralNetwork {
+
+	logrus.Infof("\n Model details %v", model)
+	linearRegression := NewLinearRegressionModel(model.Config.Seed)
+	model.LinearModel = linearRegression
+
+	return &NeuralNetwork{Model: model}
+
+}
+
+func NewNeuralNetworkFromModelFile(ModelFile string) (*NeuralNetwork, error) {
 
 	err, model := loadFromModelFile(ModelFile)
 	if err != nil {
@@ -53,8 +63,9 @@ func (nn *NeuralNetwork) GetConfig() *protoV1.ModelConfig {
 }
 
 func (nn *NeuralNetwork) LogConfig() {
-	logrus.Infof("\n Model Config %#v", nn.Model.Config)
-	logrus.Infof("\n Linear Model%#v", nn.Model.LinearModel)
+	logrus.Infof("\n Model Config (%s) -- %v", nn.Model.Uuid, nn.Model.Config)
+	logrus.Infof("\n Model State %v", nn.Model.State)
+	logrus.Infof("\n Linear Model %v", nn.Model.LinearModel)
 }
 
 func (nn *NeuralNetwork) UpdateLinearParams(gradientM float32, gradientC float32, lr float32) {
@@ -106,7 +117,15 @@ func (nn *NeuralNetwork) InteractiveTrain(xTrain []float32, yTrain []float32, xT
 		nn.UpdateLinearParams(gradM, gradC, lr)
 
 	}
-	logrus.Printf("\n Loss: %f Weight: %f Bias:%f", nn.Model.State.TrainingLoss, p.Weight, p.Bias)
+	nn.CalculateTestLoss(xTest, yTest)
+	logrus.Printf("\n Training Loss: %f, Test Loss: %f, Weight: %f Bias:%f", nn.Model.State.TrainingLoss, nn.Model.State.TestLoss, p.Weight, p.Bias)
+
+}
+
+func (nn *NeuralNetwork) CalculateTestLoss(xTest []float32, yTest []float32) {
+
+	predicted := nn.Predict(xTest)
+	nn.Model.State.TestLoss = CalculateLoss(yTest, predicted)
 
 }
 

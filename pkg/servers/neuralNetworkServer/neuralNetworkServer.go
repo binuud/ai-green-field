@@ -8,7 +8,6 @@ import (
 	protoV1 "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork"
 	bTensor "github.com/binuud/ai-green-field/pkg/bTensor"
 	nn "github.com/binuud/ai-green-field/pkg/neuralNetwork"
-	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -28,25 +27,19 @@ func NewGrpcNeuralNetworkServer() *grpcNeuralnetworkserver {
 
 func (s *grpcNeuralnetworkserver) Create(ctx context.Context, in *protoV1.CreateNeuralNetworkRequest) (*protoV1.CreateNeuralNetworkResponse, error) {
 
-	model := in.Model
-	model.Uuid = uuid.New().String() // #TODO change to uuidv4
+	s.updateTrainingModel(in.Model)
 
-	model.State.CreatedAt = timestamppb.New(time.Now())
-	model.State.UpdatedAt = timestamppb.New(time.Now())
-
-	logrus.Infof("Created Neural Network (%v)", model)
+	logrus.Infof("Created Neural Network (%v)", s.Model)
 
 	return &protoV1.CreateNeuralNetworkResponse{
-		Model: model,
+		Model: s.Model,
 	}, nil
 }
 
 func (s *grpcNeuralnetworkserver) Save(ctx context.Context, in *protoV1.SaveNeuralNetworkRequest) (*protoV1.SaveNeuralNetworkResponse, error) {
 
 	model := in.Model
-	model.Uuid = uuid.New().String() // #TODO change to uuidv4
 
-	model.State.CreatedAt = timestamppb.New(time.Now())
 	model.State.UpdatedAt = timestamppb.New(time.Now())
 
 	logrus.Infof("Saved Neural Network (%v)", model)

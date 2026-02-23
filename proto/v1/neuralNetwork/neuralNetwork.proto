@@ -16,9 +16,24 @@ message TrainingAction {
     Start = 2; // Starts from a previously paused position
     Pause = 3; // Pauses the Training
     Stop = 4;  // Stops the Training
+    GetTrainingData = 5;
+    GetTestingData = 6;
+    GetPrediction = 7;
   }
   TrainingActionEnum action = 1;
 }
+
+message TrainingData {
+  repeated float x = 1;
+  repeated float y = 2;
+}
+
+message TestingData {
+  repeated float x = 1;
+  repeated float y = 2;
+}
+
+message Prediction { repeated float y = 1; }
 
 message ModelState {
 

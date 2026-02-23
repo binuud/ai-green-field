@@ -53,9 +53,29 @@ func (s *grpcNeuralnetworkserver) updateTrainingModel(in *protoV1.Model) {
 
 func (s *grpcNeuralnetworkserver) sendStreamResponse(stream protoV1.NeuralNetwork_InteractiveTrainServer) {
 	resp := &protoV1.InteractiveTrainNeuralNetworkResponse{
-		Model: s.Model,
+		Model:        s.Model,
+		ResponseType: protoV1.InteractiveTrainNeuralNetworkResponse_StatusUpdate,
 	}
 	logrus.Infof("\n Sending model ping to client %v", resp.Model.State)
+	if err := stream.Send(resp); err != nil {
+		logrus.Printf("send error: %v", err)
+	}
+}
+
+func (s *grpcNeuralnetworkserver) sendTrainingData(stream protoV1.NeuralNetwork_InteractiveTrainServer, xTrain []float32, yTrain []float32, xTest []float32, yTest []float32) {
+	resp := &protoV1.InteractiveTrainNeuralNetworkResponse{
+		Model:        nil,
+		ResponseType: protoV1.InteractiveTrainNeuralNetworkResponse_TrainingData,
+		TrainingData: &protoV1.TrainingData{
+			X: xTrain,
+			Y: yTrain,
+		},
+		TestData: &protoV1.TestingData{
+			X: xTest,
+			Y: yTest,
+		},
+	}
+	logrus.Infof("\n Sending model training data to client %v", resp.TrainingData)
 	if err := stream.Send(resp); err != nil {
 		logrus.Printf("send error: %v", err)
 	}
@@ -145,6 +165,7 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 				logrus.Println("Starting training")
 				s.Model.State.Status = protoV1.ModelState_Running
 				nnModel.InteractiveTrain(xTrain, yTrain, xTest, yTest)
+
 				nnModel.LogConfig()
 				s.Model.State.CurrentEpoch += s.Model.Config.EpochBatch
 
@@ -155,6 +176,7 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 					s.Model.State.Status = protoV1.ModelState_Pause
 				}
 				s.sendStreamResponse(stream)
+				s.sendTrainingData(stream, xTrain, yTrain, xTest, yTest)
 
 			case protoV1.TrainingAction_Pause:
 				logrus.Println("Pausing training")
@@ -164,6 +186,10 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 			case protoV1.TrainingAction_Stop:
 				s.Model.State.Status = protoV1.ModelState_Stopped
 				logrus.Printf("Stream paused at number %d", currentNum)
+
+			case protoV1.TrainingAction_GetTrainingData:
+				logrus.Println("GetTrainingData")
+				s.sendTrainingData(stream, xTrain, yTrain, xTest, yTest)
 
 			default:
 				logrus.Printf("Unknown command: %s", in.Action.Action)

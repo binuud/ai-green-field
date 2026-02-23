@@ -593,10 +593,30 @@
       "InteractiveTrainNeuralNetworkResponse": {
         "type": "object",
         "properties": {
+          "responseType": {
+            "$ref": "#/components/schemas/InteractiveTrainNeuralNetworkResponse.ResponseTypeEnum"
+          },
           "model": {
             "$ref": "#/components/schemas/Model"
+          },
+          "trainingData": {
+            "$ref": "#/components/schemas/TrainingData"
+          },
+          "testData": {
+            "$ref": "#/components/schemas/TestingData"
+          },
+          "prediction": {
+            "$ref": "#/components/schemas/Prediction"
           }
         }
+      },
+      "InteractiveTrainNeuralNetworkResponse.ResponseTypeEnum": {
+        "type": "string",
+        "enum": [
+          "ResponseTypeIgnore",
+          "TrainingData",
+          "StatusUpdate"
+        ]
       },
       "LinearRegressionModel": {
         "type": "object",
@@ -788,6 +808,18 @@
           }
         }
       },
+      "Prediction": {
+        "type": "object",
+        "properties": {
+          "y": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        }
+      },
       "SaveNeuralNetworkRequest": {
         "type": "object",
         "properties": {
@@ -839,6 +871,25 @@
           }
         }
       },
+      "TestingData": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "y": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        }
+      },
       "TrainNeuralNetworkResponse": {
         "type": "object",
         "properties": {
@@ -862,8 +913,30 @@
           "New",
           "Start",
           "Pause",
-          "Stop"
+          "Stop",
+          "GetTrainingData",
+          "GetTestingData",
+          "GetPrediction"
         ]
+      },
+      "TrainingData": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "y": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        }
       }
     }
   }

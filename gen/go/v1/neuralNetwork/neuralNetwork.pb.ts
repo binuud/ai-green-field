@@ -12,6 +12,9 @@ export enum TrainingActionTrainingActionEnum {
   Start = "Start",
   Pause = "Pause",
   Stop = "Stop",
+  GetTrainingData = "GetTrainingData",
+  GetTestingData = "GetTestingData",
+  GetPrediction = "GetPrediction",
 }
 
 export enum ModelStateTrainingStateEnum {
@@ -49,6 +52,20 @@ export enum ModelConfigRegularizationEnum {
 
 export type TrainingAction = {
   action?: TrainingActionTrainingActionEnum
+}
+
+export type TrainingData = {
+  x?: number[]
+  y?: number[]
+}
+
+export type TestingData = {
+  x?: number[]
+  y?: number[]
+}
+
+export type Prediction = {
+  y?: number[]
 }
 
 export type ModelState = {

@@ -16,13 +16,13 @@ func ApplyLinearEquation(xData []float32, weight float32, bias float32) []float3
 
 // MSE or Mean Squared Error
 func CalculateLoss(actuals []float32, predictions []float32) float32 {
-	var diff float64
+	var diff float32
 	for i := range actuals {
 		d := predictions[i] - actuals[i]
-		diff += math.Pow(float64(d), 2.0)
+		diff += float32(math.Pow(float64(d), 2.0))
 	}
-	avergageLoss := diff / float64(len(actuals))
-	return float32(avergageLoss)
+	avergageLoss := diff / float32(len(actuals))
+	return avergageLoss
 }
 
 func CalcGradientWeight(orig_x []float32, orig_y []float32, predicted_y []float32) float32 {

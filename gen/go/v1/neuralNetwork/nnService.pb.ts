@@ -7,6 +7,13 @@
 import * as fm from "../../fetch.pb"
 import * as GoogleProtobufTimestamp from "../../google/protobuf/timestamp.pb"
 import * as NeuralNetworkNeuralNetwork from "./neuralNetwork.pb"
+
+export enum InteractiveTrainNeuralNetworkResponseResponseTypeEnum {
+  ResponseTypeIgnore = "ResponseTypeIgnore",
+  TrainingData = "TrainingData",
+  StatusUpdate = "StatusUpdate",
+}
+
 export type PingNeuralNetworkRequest = {
 }
 
@@ -70,7 +77,11 @@ export type InteractiveTrainNeuralNetworkRequest = {
 }
 
 export type InteractiveTrainNeuralNetworkResponse = {
+  responseType?: InteractiveTrainNeuralNetworkResponseResponseTypeEnum
   model?: NeuralNetworkNeuralNetwork.Model
+  trainingData?: NeuralNetworkNeuralNetwork.TrainingData
+  testData?: NeuralNetworkNeuralNetwork.TestingData
+  prediction?: NeuralNetworkNeuralNetwork.Prediction
 }
 
 export type TestStreamNeuralNetworkRequest = {

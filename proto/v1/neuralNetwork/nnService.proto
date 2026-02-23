@@ -119,7 +119,19 @@ message InteractiveTrainNeuralNetworkRequest {
   TrainingAction action = 2;
 }
 
-message InteractiveTrainNeuralNetworkResponse { Model model = 1; }
+message InteractiveTrainNeuralNetworkResponse {
+  enum ResponseTypeEnum {
+    ResponseTypeIgnore = 0;
+    TrainingData = 1;
+    StatusUpdate = 2;
+  }
+  ResponseTypeEnum responseType = 1;
+  Model model = 2;
+
+  TrainingData trainingData = 3;
+  TestingData testData = 4;
+  Prediction prediction = 5;
+}
 
 message TestStreamNeuralNetworkRequest {
   Model model = 1;

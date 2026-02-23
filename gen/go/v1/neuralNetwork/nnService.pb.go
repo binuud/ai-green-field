@@ -28,6 +28,55 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum int32
+
+const (
+	InteractiveTrainNeuralNetworkResponse_ResponseTypeIgnore InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum = 0
+	InteractiveTrainNeuralNetworkResponse_TrainingData       InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum = 1
+	InteractiveTrainNeuralNetworkResponse_StatusUpdate       InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum = 2
+)
+
+// Enum value maps for InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum.
+var (
+	InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum_name = map[int32]string{
+		0: "ResponseTypeIgnore",
+		1: "TrainingData",
+		2: "StatusUpdate",
+	}
+	InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum_value = map[string]int32{
+		"ResponseTypeIgnore": 0,
+		"TrainingData":       1,
+		"StatusUpdate":       2,
+	}
+)
+
+func (x InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum) Enum() *InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum {
+	p := new(InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum)
+	*p = x
+	return p
+}
+
+func (x InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_neuralNetwork_nnService_proto_enumTypes[0].Descriptor()
+}
+
+func (InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum) Type() protoreflect.EnumType {
+	return &file_v1_neuralNetwork_nnService_proto_enumTypes[0]
+}
+
+func (x InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum.Descriptor instead.
+func (InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum) EnumDescriptor() ([]byte, []int) {
+	return file_v1_neuralNetwork_nnService_proto_rawDescGZIP(), []int{15, 0}
+}
+
 type PingNeuralNetworkRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -708,8 +757,12 @@ func (x *InteractiveTrainNeuralNetworkRequest) GetAction() *TrainingAction {
 }
 
 type InteractiveTrainNeuralNetworkResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Model         *Model                 `protobuf:"bytes,1,opt,name=model,proto3" json:"model,omitempty"`
+	state         protoimpl.MessageState                                 `protogen:"open.v1"`
+	ResponseType  InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum `protobuf:"varint,1,opt,name=responseType,proto3,enum=neuralNetwork.InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum" json:"responseType,omitempty"`
+	Model         *Model                                                 `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`
+	TrainingData  *TrainingData                                          `protobuf:"bytes,3,opt,name=trainingData,proto3" json:"trainingData,omitempty"`
+	TestData      *TestingData                                           `protobuf:"bytes,4,opt,name=testData,proto3" json:"testData,omitempty"`
+	Prediction    *Prediction                                            `protobuf:"bytes,5,opt,name=prediction,proto3" json:"prediction,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -744,9 +797,37 @@ func (*InteractiveTrainNeuralNetworkResponse) Descriptor() ([]byte, []int) {
 	return file_v1_neuralNetwork_nnService_proto_rawDescGZIP(), []int{15}
 }
 
+func (x *InteractiveTrainNeuralNetworkResponse) GetResponseType() InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum {
+	if x != nil {
+		return x.ResponseType
+	}
+	return InteractiveTrainNeuralNetworkResponse_ResponseTypeIgnore
+}
+
 func (x *InteractiveTrainNeuralNetworkResponse) GetModel() *Model {
 	if x != nil {
 		return x.Model
+	}
+	return nil
+}
+
+func (x *InteractiveTrainNeuralNetworkResponse) GetTrainingData() *TrainingData {
+	if x != nil {
+		return x.TrainingData
+	}
+	return nil
+}
+
+func (x *InteractiveTrainNeuralNetworkResponse) GetTestData() *TestingData {
+	if x != nil {
+		return x.TestData
+	}
+	return nil
+}
+
+func (x *InteractiveTrainNeuralNetworkResponse) GetPrediction() *Prediction {
+	if x != nil {
+		return x.Prediction
 	}
 	return nil
 }
@@ -933,12 +1014,35 @@ var file_v1_neuralNetwork_nnService_proto_rawDesc = string([]byte{
 	0x6c, 0x12, 0x35, 0x0a, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28,
 	0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x65, 0x75, 0x72, 0x61, 0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72,
 	0x6b, 0x2e, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e,
-	0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x53, 0x0a, 0x25, 0x49, 0x6e, 0x74, 0x65,
-	0x72, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x4e, 0x65, 0x75, 0x72,
-	0x61, 0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x12, 0x2a, 0x0a, 0x05, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x14, 0x2e, 0x6e, 0x65, 0x75, 0x72, 0x61, 0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b,
-	0x2e, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x52, 0x05, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x22, 0x83, 0x01,
+	0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0xc2, 0x03, 0x0a, 0x25, 0x49, 0x6e, 0x74,
+	0x65, 0x72, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x4e, 0x65, 0x75,
+	0x72, 0x61, 0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x69, 0x0a, 0x0c, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x54, 0x79,
+	0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x45, 0x2e, 0x6e, 0x65, 0x75, 0x72, 0x61,
+	0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x61, 0x63,
+	0x74, 0x69, 0x76, 0x65, 0x54, 0x72, 0x61, 0x69, 0x6e, 0x4e, 0x65, 0x75, 0x72, 0x61, 0x6c, 0x4e,
+	0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x54, 0x79, 0x70, 0x65, 0x45, 0x6e, 0x75, 0x6d, 0x52,
+	0x0c, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x54, 0x79, 0x70, 0x65, 0x12, 0x2a, 0x0a,
+	0x05, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x6e,
+	0x65, 0x75, 0x72, 0x61, 0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x2e, 0x4d, 0x6f, 0x64,
+	0x65, 0x6c, 0x52, 0x05, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x12, 0x3f, 0x0a, 0x0c, 0x74, 0x72, 0x61,
+	0x69, 0x6e, 0x69, 0x6e, 0x67, 0x44, 0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x1b, 0x2e, 0x6e, 0x65, 0x75, 0x72, 0x61, 0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x2e,
+	0x54, 0x72, 0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x44, 0x61, 0x74, 0x61, 0x52, 0x0c, 0x74, 0x72,
+	0x61, 0x69, 0x6e, 0x69, 0x6e, 0x67, 0x44, 0x61, 0x74, 0x61, 0x12, 0x36, 0x0a, 0x08, 0x74, 0x65,
+	0x73, 0x74, 0x44, 0x61, 0x74, 0x61, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x6e,
+	0x65, 0x75, 0x72, 0x61, 0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x2e, 0x54, 0x65, 0x73,
+	0x74, 0x69, 0x6e, 0x67, 0x44, 0x61, 0x74, 0x61, 0x52, 0x08, 0x74, 0x65, 0x73, 0x74, 0x44, 0x61,
+	0x74, 0x61, 0x12, 0x39, 0x0a, 0x0a, 0x70, 0x72, 0x65, 0x64, 0x69, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6e, 0x65, 0x75, 0x72, 0x61, 0x6c, 0x4e,
+	0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x2e, 0x50, 0x72, 0x65, 0x64, 0x69, 0x63, 0x74, 0x69, 0x6f,
+	0x6e, 0x52, 0x0a, 0x70, 0x72, 0x65, 0x64, 0x69, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x4e, 0x0a,
+	0x10, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x54, 0x79, 0x70, 0x65, 0x45, 0x6e, 0x75,
+	0x6d, 0x12, 0x16, 0x0a, 0x12, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x54, 0x79, 0x70,
+	0x65, 0x49, 0x67, 0x6e, 0x6f, 0x72, 0x65, 0x10, 0x00, 0x12, 0x10, 0x0a, 0x0c, 0x54, 0x72, 0x61,
+	0x69, 0x6e, 0x69, 0x6e, 0x67, 0x44, 0x61, 0x74, 0x61, 0x10, 0x01, 0x12, 0x10, 0x0a, 0x0c, 0x53,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x10, 0x02, 0x22, 0x83, 0x01,
 	0x0a, 0x1e, 0x54, 0x65, 0x73, 0x74, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x4e, 0x65, 0x75, 0x72,
 	0x61, 0x6c, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
 	0x12, 0x2a, 0x0a, 0x05, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
@@ -1048,73 +1152,82 @@ func file_v1_neuralNetwork_nnService_proto_rawDescGZIP() []byte {
 	return file_v1_neuralNetwork_nnService_proto_rawDescData
 }
 
+var file_v1_neuralNetwork_nnService_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_v1_neuralNetwork_nnService_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_v1_neuralNetwork_nnService_proto_goTypes = []any{
-	(*PingNeuralNetworkRequest)(nil),              // 0: neuralNetwork.PingNeuralNetworkRequest
-	(*PingNeuralNetworkResponse)(nil),             // 1: neuralNetwork.PingNeuralNetworkResponse
-	(*CreateNeuralNetworkRequest)(nil),            // 2: neuralNetwork.CreateNeuralNetworkRequest
-	(*CreateNeuralNetworkResponse)(nil),           // 3: neuralNetwork.CreateNeuralNetworkResponse
-	(*TrainNeuralNetworkRequest)(nil),             // 4: neuralNetwork.TrainNeuralNetworkRequest
-	(*TrainNeuralNetworkResponse)(nil),            // 5: neuralNetwork.TrainNeuralNetworkResponse
-	(*TestNeuralNetworkRequest)(nil),              // 6: neuralNetwork.TestNeuralNetworkRequest
-	(*TestNeuralNetworkResponse)(nil),             // 7: neuralNetwork.TestNeuralNetworkResponse
-	(*LoadNeuralNetworkRequest)(nil),              // 8: neuralNetwork.LoadNeuralNetworkRequest
-	(*LoadNeuralNetworkResponse)(nil),             // 9: neuralNetwork.LoadNeuralNetworkResponse
-	(*SaveNeuralNetworkRequest)(nil),              // 10: neuralNetwork.SaveNeuralNetworkRequest
-	(*SaveNeuralNetworkResponse)(nil),             // 11: neuralNetwork.SaveNeuralNetworkResponse
-	(*ListNeuralNetworkRequest)(nil),              // 12: neuralNetwork.ListNeuralNetworkRequest
-	(*ListNeuralNetworkResponse)(nil),             // 13: neuralNetwork.ListNeuralNetworkResponse
-	(*InteractiveTrainNeuralNetworkRequest)(nil),  // 14: neuralNetwork.InteractiveTrainNeuralNetworkRequest
-	(*InteractiveTrainNeuralNetworkResponse)(nil), // 15: neuralNetwork.InteractiveTrainNeuralNetworkResponse
-	(*TestStreamNeuralNetworkRequest)(nil),        // 16: neuralNetwork.TestStreamNeuralNetworkRequest
-	(*TestStreamNeuralNetworkResponse)(nil),       // 17: neuralNetwork.TestStreamNeuralNetworkResponse
-	(*timestamppb.Timestamp)(nil),                 // 18: google.protobuf.Timestamp
-	(*Model)(nil),                                 // 19: neuralNetwork.Model
-	(*TrainingAction)(nil),                        // 20: neuralNetwork.TrainingAction
+	(InteractiveTrainNeuralNetworkResponse_ResponseTypeEnum)(0), // 0: neuralNetwork.InteractiveTrainNeuralNetworkResponse.ResponseTypeEnum
+	(*PingNeuralNetworkRequest)(nil),                            // 1: neuralNetwork.PingNeuralNetworkRequest
+	(*PingNeuralNetworkResponse)(nil),                           // 2: neuralNetwork.PingNeuralNetworkResponse
+	(*CreateNeuralNetworkRequest)(nil),                          // 3: neuralNetwork.CreateNeuralNetworkRequest
+	(*CreateNeuralNetworkResponse)(nil),                         // 4: neuralNetwork.CreateNeuralNetworkResponse
+	(*TrainNeuralNetworkRequest)(nil),                           // 5: neuralNetwork.TrainNeuralNetworkRequest
+	(*TrainNeuralNetworkResponse)(nil),                          // 6: neuralNetwork.TrainNeuralNetworkResponse
+	(*TestNeuralNetworkRequest)(nil),                            // 7: neuralNetwork.TestNeuralNetworkRequest
+	(*TestNeuralNetworkResponse)(nil),                           // 8: neuralNetwork.TestNeuralNetworkResponse
+	(*LoadNeuralNetworkRequest)(nil),                            // 9: neuralNetwork.LoadNeuralNetworkRequest
+	(*LoadNeuralNetworkResponse)(nil),                           // 10: neuralNetwork.LoadNeuralNetworkResponse
+	(*SaveNeuralNetworkRequest)(nil),                            // 11: neuralNetwork.SaveNeuralNetworkRequest
+	(*SaveNeuralNetworkResponse)(nil),                           // 12: neuralNetwork.SaveNeuralNetworkResponse
+	(*ListNeuralNetworkRequest)(nil),                            // 13: neuralNetwork.ListNeuralNetworkRequest
+	(*ListNeuralNetworkResponse)(nil),                           // 14: neuralNetwork.ListNeuralNetworkResponse
+	(*InteractiveTrainNeuralNetworkRequest)(nil),                // 15: neuralNetwork.InteractiveTrainNeuralNetworkRequest
+	(*InteractiveTrainNeuralNetworkResponse)(nil),               // 16: neuralNetwork.InteractiveTrainNeuralNetworkResponse
+	(*TestStreamNeuralNetworkRequest)(nil),                      // 17: neuralNetwork.TestStreamNeuralNetworkRequest
+	(*TestStreamNeuralNetworkResponse)(nil),                     // 18: neuralNetwork.TestStreamNeuralNetworkResponse
+	(*timestamppb.Timestamp)(nil),                               // 19: google.protobuf.Timestamp
+	(*Model)(nil),                                               // 20: neuralNetwork.Model
+	(*TrainingAction)(nil),                                      // 21: neuralNetwork.TrainingAction
+	(*TrainingData)(nil),                                        // 22: neuralNetwork.TrainingData
+	(*TestingData)(nil),                                         // 23: neuralNetwork.TestingData
+	(*Prediction)(nil),                                          // 24: neuralNetwork.Prediction
 }
 var file_v1_neuralNetwork_nnService_proto_depIdxs = []int32{
-	18, // 0: neuralNetwork.PingNeuralNetworkResponse.createdAt:type_name -> google.protobuf.Timestamp
-	19, // 1: neuralNetwork.CreateNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
-	19, // 2: neuralNetwork.CreateNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
-	19, // 3: neuralNetwork.TrainNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
-	19, // 4: neuralNetwork.TrainNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
-	19, // 5: neuralNetwork.TestNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
-	19, // 6: neuralNetwork.TestNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
-	19, // 7: neuralNetwork.LoadNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
-	19, // 8: neuralNetwork.LoadNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
-	19, // 9: neuralNetwork.SaveNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
-	19, // 10: neuralNetwork.SaveNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
-	19, // 11: neuralNetwork.ListNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
-	19, // 12: neuralNetwork.ListNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
-	19, // 13: neuralNetwork.InteractiveTrainNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
-	20, // 14: neuralNetwork.InteractiveTrainNeuralNetworkRequest.action:type_name -> neuralNetwork.TrainingAction
-	19, // 15: neuralNetwork.InteractiveTrainNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
-	19, // 16: neuralNetwork.TestStreamNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
-	20, // 17: neuralNetwork.TestStreamNeuralNetworkRequest.action:type_name -> neuralNetwork.TrainingAction
-	19, // 18: neuralNetwork.TestStreamNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
-	0,  // 19: neuralNetwork.NeuralNetwork.Ping:input_type -> neuralNetwork.PingNeuralNetworkRequest
-	2,  // 20: neuralNetwork.NeuralNetwork.Create:input_type -> neuralNetwork.CreateNeuralNetworkRequest
-	4,  // 21: neuralNetwork.NeuralNetwork.Train:input_type -> neuralNetwork.TrainNeuralNetworkRequest
-	14, // 22: neuralNetwork.NeuralNetwork.InteractiveTrain:input_type -> neuralNetwork.InteractiveTrainNeuralNetworkRequest
-	6,  // 23: neuralNetwork.NeuralNetwork.Test:input_type -> neuralNetwork.TestNeuralNetworkRequest
-	8,  // 24: neuralNetwork.NeuralNetwork.Load:input_type -> neuralNetwork.LoadNeuralNetworkRequest
-	10, // 25: neuralNetwork.NeuralNetwork.Save:input_type -> neuralNetwork.SaveNeuralNetworkRequest
-	12, // 26: neuralNetwork.NeuralNetwork.List:input_type -> neuralNetwork.ListNeuralNetworkRequest
-	16, // 27: neuralNetwork.NeuralNetwork.TestStream:input_type -> neuralNetwork.TestStreamNeuralNetworkRequest
-	1,  // 28: neuralNetwork.NeuralNetwork.Ping:output_type -> neuralNetwork.PingNeuralNetworkResponse
-	3,  // 29: neuralNetwork.NeuralNetwork.Create:output_type -> neuralNetwork.CreateNeuralNetworkResponse
-	5,  // 30: neuralNetwork.NeuralNetwork.Train:output_type -> neuralNetwork.TrainNeuralNetworkResponse
-	15, // 31: neuralNetwork.NeuralNetwork.InteractiveTrain:output_type -> neuralNetwork.InteractiveTrainNeuralNetworkResponse
-	7,  // 32: neuralNetwork.NeuralNetwork.Test:output_type -> neuralNetwork.TestNeuralNetworkResponse
-	9,  // 33: neuralNetwork.NeuralNetwork.Load:output_type -> neuralNetwork.LoadNeuralNetworkResponse
-	11, // 34: neuralNetwork.NeuralNetwork.Save:output_type -> neuralNetwork.SaveNeuralNetworkResponse
-	13, // 35: neuralNetwork.NeuralNetwork.List:output_type -> neuralNetwork.ListNeuralNetworkResponse
-	17, // 36: neuralNetwork.NeuralNetwork.TestStream:output_type -> neuralNetwork.TestStreamNeuralNetworkResponse
-	28, // [28:37] is the sub-list for method output_type
-	19, // [19:28] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	19, // 0: neuralNetwork.PingNeuralNetworkResponse.createdAt:type_name -> google.protobuf.Timestamp
+	20, // 1: neuralNetwork.CreateNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
+	20, // 2: neuralNetwork.CreateNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
+	20, // 3: neuralNetwork.TrainNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
+	20, // 4: neuralNetwork.TrainNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
+	20, // 5: neuralNetwork.TestNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
+	20, // 6: neuralNetwork.TestNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
+	20, // 7: neuralNetwork.LoadNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
+	20, // 8: neuralNetwork.LoadNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
+	20, // 9: neuralNetwork.SaveNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
+	20, // 10: neuralNetwork.SaveNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
+	20, // 11: neuralNetwork.ListNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
+	20, // 12: neuralNetwork.ListNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
+	20, // 13: neuralNetwork.InteractiveTrainNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
+	21, // 14: neuralNetwork.InteractiveTrainNeuralNetworkRequest.action:type_name -> neuralNetwork.TrainingAction
+	0,  // 15: neuralNetwork.InteractiveTrainNeuralNetworkResponse.responseType:type_name -> neuralNetwork.InteractiveTrainNeuralNetworkResponse.ResponseTypeEnum
+	20, // 16: neuralNetwork.InteractiveTrainNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
+	22, // 17: neuralNetwork.InteractiveTrainNeuralNetworkResponse.trainingData:type_name -> neuralNetwork.TrainingData
+	23, // 18: neuralNetwork.InteractiveTrainNeuralNetworkResponse.testData:type_name -> neuralNetwork.TestingData
+	24, // 19: neuralNetwork.InteractiveTrainNeuralNetworkResponse.prediction:type_name -> neuralNetwork.Prediction
+	20, // 20: neuralNetwork.TestStreamNeuralNetworkRequest.model:type_name -> neuralNetwork.Model
+	21, // 21: neuralNetwork.TestStreamNeuralNetworkRequest.action:type_name -> neuralNetwork.TrainingAction
+	20, // 22: neuralNetwork.TestStreamNeuralNetworkResponse.model:type_name -> neuralNetwork.Model
+	1,  // 23: neuralNetwork.NeuralNetwork.Ping:input_type -> neuralNetwork.PingNeuralNetworkRequest
+	3,  // 24: neuralNetwork.NeuralNetwork.Create:input_type -> neuralNetwork.CreateNeuralNetworkRequest
+	5,  // 25: neuralNetwork.NeuralNetwork.Train:input_type -> neuralNetwork.TrainNeuralNetworkRequest
+	15, // 26: neuralNetwork.NeuralNetwork.InteractiveTrain:input_type -> neuralNetwork.InteractiveTrainNeuralNetworkRequest
+	7,  // 27: neuralNetwork.NeuralNetwork.Test:input_type -> neuralNetwork.TestNeuralNetworkRequest
+	9,  // 28: neuralNetwork.NeuralNetwork.Load:input_type -> neuralNetwork.LoadNeuralNetworkRequest
+	11, // 29: neuralNetwork.NeuralNetwork.Save:input_type -> neuralNetwork.SaveNeuralNetworkRequest
+	13, // 30: neuralNetwork.NeuralNetwork.List:input_type -> neuralNetwork.ListNeuralNetworkRequest
+	17, // 31: neuralNetwork.NeuralNetwork.TestStream:input_type -> neuralNetwork.TestStreamNeuralNetworkRequest
+	2,  // 32: neuralNetwork.NeuralNetwork.Ping:output_type -> neuralNetwork.PingNeuralNetworkResponse
+	4,  // 33: neuralNetwork.NeuralNetwork.Create:output_type -> neuralNetwork.CreateNeuralNetworkResponse
+	6,  // 34: neuralNetwork.NeuralNetwork.Train:output_type -> neuralNetwork.TrainNeuralNetworkResponse
+	16, // 35: neuralNetwork.NeuralNetwork.InteractiveTrain:output_type -> neuralNetwork.InteractiveTrainNeuralNetworkResponse
+	8,  // 36: neuralNetwork.NeuralNetwork.Test:output_type -> neuralNetwork.TestNeuralNetworkResponse
+	10, // 37: neuralNetwork.NeuralNetwork.Load:output_type -> neuralNetwork.LoadNeuralNetworkResponse
+	12, // 38: neuralNetwork.NeuralNetwork.Save:output_type -> neuralNetwork.SaveNeuralNetworkResponse
+	14, // 39: neuralNetwork.NeuralNetwork.List:output_type -> neuralNetwork.ListNeuralNetworkResponse
+	18, // 40: neuralNetwork.NeuralNetwork.TestStream:output_type -> neuralNetwork.TestStreamNeuralNetworkResponse
+	32, // [32:41] is the sub-list for method output_type
+	23, // [23:32] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_v1_neuralNetwork_nnService_proto_init() }
@@ -1128,13 +1241,14 @@ func file_v1_neuralNetwork_nnService_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_neuralNetwork_nnService_proto_rawDesc), len(file_v1_neuralNetwork_nnService_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_v1_neuralNetwork_nnService_proto_goTypes,
 		DependencyIndexes: file_v1_neuralNetwork_nnService_proto_depIdxs,
+		EnumInfos:         file_v1_neuralNetwork_nnService_proto_enumTypes,
 		MessageInfos:      file_v1_neuralNetwork_nnService_proto_msgTypes,
 	}.Build()
 	File_v1_neuralNetwork_nnService_proto = out.File

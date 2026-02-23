@@ -20,13 +20,7 @@ message TrainingAction {
   TrainingActionEnum action = 1;
 }
 
-message TrainingState {
-
-  enum TrainingTypeEnum {
-    TrainingTypeIgnore = 0;
-    Classification = 1;
-    Regression = 2;
-  }
+message ModelState {
 
   enum TrainingStateEnum {
     TrainingStateIgnore = 0;
@@ -36,6 +30,27 @@ message TrainingState {
     Pause = 4;
     Completed = 5;
     Stopped = 6;
+  }
+
+  // Current training state
+  TrainingStateEnum status = 2;
+
+  // current run state, the epoch iteration run which is currently running
+  int32 currentEpoch = 3;
+
+  float trainingLoss = 10;
+  float testLoss = 11;
+
+  google.protobuf.Timestamp createdAt = 22;
+  google.protobuf.Timestamp updatedAt = 23;
+}
+
+message ModelConfig {
+
+  enum ModelTypeEnum {
+    ModelTypeIgnore = 0;
+    Classification = 1;
+    Regression = 2;
   }
 
   enum ActivationFunctionEnum {
@@ -55,48 +70,49 @@ message TrainingState {
     RegularizationNone = 4;
   }
 
-  // uuid to keep track of different training runs
-  string uuid = 1;
-
+  string name = 1;
+  string description = 2;
   // Learning rate
-  float learningRate = 2;
+  float learningRate = 5;
   // Number of training epochs
-  int32 epochs = 3;
+  int32 epochs = 6;
 
   // number of epochs to run, and return state to UI
   // Traning runs and pauses after epochBatch number of runs
   // waiting for user input
-  int32 epochBatch = 4;
+  int32 epochBatch = 7;
 
   // Activation function type (e.g., "relu", "sigmoid", "tanh")
-  ActivationFunctionEnum activationFunction = 5;
+  ActivationFunctionEnum activationFunction = 8;
 
   // Regularization type (e.g., "l1", "l2", "dropout", "none")
-  RegularizationEnum regularization = 6;
+  RegularizationEnum regularization = 9;
 
   // Regularization strength/coefficient
-  float regularizationRate = 7;
+  float regularizationRate = 10;
 
-  TrainingTypeEnum trainingType = 8;
-
-  float trainingLoss = 10;
-  float testLoss = 11;
+  ModelTypeEnum trainingType = 11;
 
   // number of inputs
-  int32 numInputs = 12;
+  int64 seed = 15;
+  int32 numInputs = 16;
 
   // number of outputs
-  int32 numOutputs = 13;
+  int32 numOutputs = 17;
 
   // number of hidden layers
-  int32 numLayers = 14;
+  int32 numLayers = 18;
+}
 
-  // Current training state
-  TrainingStateEnum state = 20;
+message Model {
+  // uuid to keep track of different training runs
+  string uuid = 1;
+  ModelState state = 5;
+  ModelConfig config = 6;
+  LinearRegressionModel linearModel = 10;
+}
 
-  // current run state, the epoch iteration run which is currently running
-  int32 currentEpoch = 21;
-
-  google.protobuf.Timestamp createdAt = 22;
-  google.protobuf.Timestamp updatedAt = 23;
+message LinearRegressionModel {
+  float Weight = 1;
+  float Bias = 2;
 }

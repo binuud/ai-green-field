@@ -31,13 +31,13 @@ func NewPlotter(Filename string) *nnPlotter {
 	}
 }
 
-func (p *nnPlotter) addPoints(xData []float64, yData []float64, plotColor color.Color) {
+func (p *nnPlotter) addPoints(xData []float32, yData []float32, plotColor color.Color) {
 
 	// Convert to XYs for plotting
 	pts := make(plotter.XYs, len(xData))
 	for i := range xData {
-		pts[i].X = xData[i]
-		pts[i].Y = yData[i]
+		pts[i].X = float64(xData[i])
+		pts[i].Y = float64(yData[i])
 	}
 
 	s1, err := plotter.NewScatter(pts)

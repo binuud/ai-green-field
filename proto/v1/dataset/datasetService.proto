@@ -1,0 +1,56 @@
+/// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+package dataset;
+
+option go_package = "github.com/binuud/ai-green-field/gen/go/v1/dataset";
+
+import "v1/dataset/dataset.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// NeuralNetwork
+service DatasetService {
+
+  rpc Ping(PingDatasetRequest) returns (PingDatasetResponse) {
+    option (google.api.http) = {
+      get : "/v1/dataset/ping"
+    };
+  }
+
+  rpc Get(GetDatasetRequest) returns (GetDatasetResponse) {
+    option (google.api.http) = {
+      get : "/v1/dataset/get"
+    };
+  }
+
+  rpc List(ListDatasetRequest) returns (ListDatasetResponse) {
+    option (google.api.http) = {
+      get : "/v1/dataset/list"
+    };
+  }
+}
+
+message PingDatasetRequest {}
+
+message PingDatasetResponse {
+
+  // ping response creation time
+  google.protobuf.Timestamp createdAt = 1;
+
+  // small description about the service
+  string description = 2;
+
+  // json data with details on the service
+  string data = 3;
+}
+
+message GetDatasetRequest {}
+
+message GetDatasetResponse { Dataset dataset = 1; }
+
+message ListDatasetRequest {}
+
+message ListDatasetResponse { repeated Dataset datasets = 1; }

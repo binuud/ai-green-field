@@ -14,56 +14,56 @@ import (
 )
 
 type grpcNeuralnetworkserver struct {
-	trainingState *protoV1.TrainingState
+	Model *protoV1.Model
 	protoV1.UnimplementedNeuralNetworkServer
 }
 
 func NewGrpcNeuralNetworkServer() *grpcNeuralnetworkserver {
 
 	return &grpcNeuralnetworkserver{
-		trainingState: nil,
+		Model: nil,
 	}
 
 }
 
 func (s *grpcNeuralnetworkserver) Create(ctx context.Context, in *protoV1.CreateNeuralNetworkRequest) (*protoV1.CreateNeuralNetworkResponse, error) {
 
-	state := in.State
-	state.Uuid = uuid.New().String() // #TODO change to uuidv4
+	model := in.Model
+	model.Uuid = uuid.New().String() // #TODO change to uuidv4
 
-	state.CreatedAt = timestamppb.New(time.Now())
-	state.UpdatedAt = timestamppb.New(time.Now())
+	model.State.CreatedAt = timestamppb.New(time.Now())
+	model.State.UpdatedAt = timestamppb.New(time.Now())
 
-	logrus.Infof("Created Neural Network (%v)", state)
+	logrus.Infof("Created Neural Network (%v)", model)
 
 	return &protoV1.CreateNeuralNetworkResponse{
-		State: state,
+		Model: model,
 	}, nil
 }
 
 func (s *grpcNeuralnetworkserver) Save(ctx context.Context, in *protoV1.SaveNeuralNetworkRequest) (*protoV1.SaveNeuralNetworkResponse, error) {
 
-	state := in.State
-	state.Uuid = uuid.New().String() // #TODO change to uuidv4
+	model := in.Model
+	model.Uuid = uuid.New().String() // #TODO change to uuidv4
 
-	state.CreatedAt = timestamppb.New(time.Now())
-	state.UpdatedAt = timestamppb.New(time.Now())
+	model.State.CreatedAt = timestamppb.New(time.Now())
+	model.State.UpdatedAt = timestamppb.New(time.Now())
 
-	logrus.Infof("Saved Neural Network (%v)", state)
+	logrus.Infof("Saved Neural Network (%v)", model)
 
 	return &protoV1.SaveNeuralNetworkResponse{
-		State: state,
+		Model: model,
 	}, nil
 }
 
 func (s *grpcNeuralnetworkserver) Train(ctx context.Context, in *protoV1.TrainNeuralNetworkRequest) (*protoV1.TrainNeuralNetworkResponse, error) {
 
-	state := in.State
+	model := in.Model
 
 	x := bTensor.NewFromArange(0.0, 1.0, 0.02)
 	fmt.Println("Result X:", x.Data[:10])
 
-	actualLinearParams := &nn.LinearParams{
+	actualLinearParams := &protoV1.LinearRegressionModel{
 		Weight: 1.05,
 		Bias:   0.95,
 	}
@@ -80,29 +80,23 @@ func (s *grpcNeuralnetworkserver) Train(ctx context.Context, in *protoV1.TrainNe
 	fmt.Printf("\n Test Data len %d, %d", len(xTest), len(yTest))
 
 	// create random training weights
-	model := nn.NewNeuralNetwork(&nn.NeuralNetworkConfig{
-		Name:         "LinearRegression",
-		LearningRate: float64(state.LearningRate),
-		NumEpochs:    int(state.Epochs),
-		EpochBatch:   int(state.EpochBatch),
-		Seed:         42.0,
-	})
+	nnModel := nn.NewNeuralNetwork(model.Config)
 
-	model.LogConfig()
-	model.Train(xTrain, yTrain, xTest, yTest)
-	model.LogConfig()
+	nnModel.LogConfig()
+	nnModel.Train(xTrain, yTrain, xTest, yTest)
+	nnModel.LogConfig()
 	//check model loss with test data
-	predicted := model.Predict(xTest)
+	predicted := nnModel.Predict(xTest)
 	// predicted := ApplyLinearEquation(xTrain, p.Weight, p.Bias)
 	loss := nn.CalculateLoss(yTest, predicted)
 	logrus.Printf("\n Loss on test data %f", loss)
 
-	state.UpdatedAt = timestamppb.New(time.Now())
+	nnModel.Model.State.UpdatedAt = timestamppb.New(time.Now())
 
-	logrus.Infof("Training Neural Network (%v)", state)
+	logrus.Infof("Training Neural Network (%v)", nnModel.Model)
 
 	return &protoV1.TrainNeuralNetworkResponse{
-		State: state,
+		Model: nnModel.Model,
 	}, nil
 }
 

@@ -38,10 +38,12 @@ func (s *grpcNeuralnetworkserver) TestStream(stream protoV1.NeuralNetwork_TestSt
 			}
 
 			resp := &protoV1.TestStreamNeuralNetworkResponse{
-				State: &protoV1.TrainingState{
-					NumOutputs: int32(currentNum),
-					UpdatedAt:  timestamppb.New(time.Now()),
-					State:      protoV1.TrainingState_Pause,
+				Model: &protoV1.Model{
+					State: &protoV1.ModelState{
+						CurrentEpoch: int32(currentNum),
+						UpdatedAt:    timestamppb.New(time.Now()),
+						Status:       protoV1.ModelState_Pause,
+					},
 				},
 			}
 			mu.Unlock()

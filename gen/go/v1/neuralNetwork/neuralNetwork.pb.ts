@@ -14,13 +14,7 @@ export enum TrainingActionTrainingActionEnum {
   Stop = "Stop",
 }
 
-export enum TrainingStateTrainingTypeEnum {
-  TrainingTypeIgnore = "TrainingTypeIgnore",
-  Classification = "Classification",
-  Regression = "Regression",
-}
-
-export enum TrainingStateTrainingStateEnum {
+export enum ModelStateTrainingStateEnum {
   TrainingStateIgnore = "TrainingStateIgnore",
   New = "New",
   Running = "Running",
@@ -30,7 +24,13 @@ export enum TrainingStateTrainingStateEnum {
   Stopped = "Stopped",
 }
 
-export enum TrainingStateActivationFunctionEnum {
+export enum ModelConfigModelTypeEnum {
+  ModelTypeIgnore = "ModelTypeIgnore",
+  Classification = "Classification",
+  Regression = "Regression",
+}
+
+export enum ModelConfigActivationFunctionEnum {
   ActivationFunctionIgnore = "ActivationFunctionIgnore",
   ActivationFunctionNone = "ActivationFunctionNone",
   Relu = "Relu",
@@ -39,7 +39,7 @@ export enum TrainingStateActivationFunctionEnum {
   Linear = "Linear",
 }
 
-export enum TrainingStateRegularizationEnum {
+export enum ModelConfigRegularizationEnum {
   RegularizationIgnore = "RegularizationIgnore",
   L1 = "L1",
   L2 = "L2",
@@ -51,22 +51,39 @@ export type TrainingAction = {
   action?: TrainingActionTrainingActionEnum
 }
 
-export type TrainingState = {
-  uuid?: string
+export type ModelState = {
+  status?: ModelStateTrainingStateEnum
+  currentEpoch?: number
+  trainingLoss?: number
+  testLoss?: number
+  createdAt?: GoogleProtobufTimestamp.Timestamp
+  updatedAt?: GoogleProtobufTimestamp.Timestamp
+}
+
+export type ModelConfig = {
+  name?: string
+  description?: string
   learningRate?: number
   epochs?: number
   epochBatch?: number
-  activationFunction?: TrainingStateActivationFunctionEnum
-  regularization?: TrainingStateRegularizationEnum
+  activationFunction?: ModelConfigActivationFunctionEnum
+  regularization?: ModelConfigRegularizationEnum
   regularizationRate?: number
-  trainingType?: TrainingStateTrainingTypeEnum
-  trainingLoss?: number
-  testLoss?: number
+  trainingType?: ModelConfigModelTypeEnum
+  seed?: string
   numInputs?: number
   numOutputs?: number
   numLayers?: number
-  state?: TrainingStateTrainingStateEnum
-  currentEpoch?: number
-  createdAt?: GoogleProtobufTimestamp.Timestamp
-  updatedAt?: GoogleProtobufTimestamp.Timestamp
+}
+
+export type Model = {
+  uuid?: string
+  state?: ModelState
+  config?: ModelConfig
+  linearModel?: LinearRegressionModel
+}
+
+export type LinearRegressionModel = {
+  weight?: number
+  bias?: number
 }

@@ -24,7 +24,7 @@ func Test_NN_SaveLoad(t *testing.T) {
 	model.Model.Uuid = "fd878f87-b1bf-4848-bdbf-64374f2f0e2b"
 
 	// Test Save()
-	err := model.Save()
+	err := model.Save(filename)
 	if err != nil {
 		t.Fatalf("Save() failed: %v", err)
 	}

@@ -33,8 +33,13 @@ func loadFromModelFile(fileName string) (error, *protoV1.Model) {
 
 }
 
-func (nn *NeuralNetwork) Save() error {
-	f, err := os.Create(nn.GetFileName())
+func (nn *NeuralNetwork) Save(fileName string) error {
+
+	if fileName == "" {
+		fileName = nn.GetFileName()
+	}
+
+	f, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}

@@ -62,7 +62,7 @@ func (s *grpcNeuralnetworkserver) sendStreamResponse(stream protoV1.NeuralNetwor
 	}
 }
 
-func (s *grpcNeuralnetworkserver) sendTrainingData(stream protoV1.NeuralNetwork_InteractiveTrainServer, xTrain []float32, yTrain []float32, xTest []float32, yTest []float32) {
+func (s *grpcNeuralnetworkserver) sendTrainingData(stream protoV1.NeuralNetwork_InteractiveTrainServer, xTrain []float32, yTrain []float32, xTest []float32, yTest []float32, predicted []float32) {
 	resp := &protoV1.InteractiveTrainNeuralNetworkResponse{
 		Model:        nil,
 		ResponseType: protoV1.InteractiveTrainNeuralNetworkResponse_TrainingData,
@@ -70,9 +70,12 @@ func (s *grpcNeuralnetworkserver) sendTrainingData(stream protoV1.NeuralNetwork_
 			X: xTrain,
 			Y: yTrain,
 		},
-		TestData: &protoV1.TestingData{
+		TestData: &protoV1.TrainingData{
 			X: xTest,
 			Y: yTest,
+		},
+		Prediction: &protoV1.Prediction{
+			Y: predicted,
 		},
 	}
 	logrus.Infof("\n Sending model training data to client %v", resp.TrainingData)
@@ -165,6 +168,7 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 				logrus.Println("Starting training")
 				s.Model.State.Status = protoV1.ModelState_Running
 				nnModel.InteractiveTrain(xTrain, yTrain, xTest, yTest)
+				predicted := nnModel.Predict(xTest)
 
 				nnModel.LogConfig()
 				s.Model.State.CurrentEpoch += s.Model.Config.EpochBatch
@@ -176,7 +180,7 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 					s.Model.State.Status = protoV1.ModelState_Pause
 				}
 				s.sendStreamResponse(stream)
-				s.sendTrainingData(stream, xTrain, yTrain, xTest, yTest)
+				s.sendTrainingData(stream, xTrain, yTrain, xTest, yTest, predicted)
 
 			case protoV1.TrainingAction_Pause:
 				logrus.Println("Pausing training")
@@ -189,7 +193,7 @@ func (s *grpcNeuralnetworkserver) InteractiveTrain(stream protoV1.NeuralNetwork_
 
 			case protoV1.TrainingAction_GetTrainingData:
 				logrus.Println("GetTrainingData")
-				s.sendTrainingData(stream, xTrain, yTrain, xTest, yTest)
+				s.sendTrainingData(stream, xTrain, yTrain, xTest, yTest, nil)
 
 			default:
 				logrus.Printf("Unknown command: %s", in.Action.Action)

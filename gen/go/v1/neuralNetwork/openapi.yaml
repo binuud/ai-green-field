@@ -366,7 +366,7 @@ components:
         trainingData:
           $ref: '#/components/schemas/TrainingData'
         testData:
-          $ref: '#/components/schemas/TestingData'
+          $ref: '#/components/schemas/TrainingData'
         prediction:
           $ref: '#/components/schemas/Prediction'
     InteractiveTrainNeuralNetworkResponse.ResponseTypeEnum:
@@ -550,19 +550,6 @@ components:
       properties:
         model:
           $ref: '#/components/schemas/Model'
-    TestingData:
-      type: object
-      properties:
-        x:
-          type: array
-          items:
-            type: number
-            format: float
-        y:
-          type: array
-          items:
-            type: number
-            format: float
     TrainNeuralNetworkResponse:
       type: object
       properties:

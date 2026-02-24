@@ -80,7 +80,7 @@ export type InteractiveTrainNeuralNetworkResponse = {
   responseType?: InteractiveTrainNeuralNetworkResponseResponseTypeEnum
   model?: NeuralNetworkNeuralNetwork.Model
   trainingData?: NeuralNetworkNeuralNetwork.TrainingData
-  testData?: NeuralNetworkNeuralNetwork.TestingData
+  testData?: NeuralNetworkNeuralNetwork.TrainingData
   prediction?: NeuralNetworkNeuralNetwork.Prediction
 }
 

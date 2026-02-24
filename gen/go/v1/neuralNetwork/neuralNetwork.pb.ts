@@ -59,11 +59,6 @@ export type TrainingData = {
   y?: number[]
 }
 
-export type TestingData = {
-  x?: number[]
-  y?: number[]
-}
-
 export type Prediction = {
   y?: number[]
 }

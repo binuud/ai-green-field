@@ -78,7 +78,7 @@ func (s *grpcNeuralnetworkserver) sendTrainingData(stream protoV1.NeuralNetwork_
 			Y: predicted,
 		},
 	}
-	logrus.Infof("\n Sending model training data to client %v", resp.TrainingData)
+	logrus.Infof("\n Sending model training data to client %v", resp)
 	if err := stream.Send(resp); err != nil {
 		logrus.Printf("send error: %v", err)
 	}

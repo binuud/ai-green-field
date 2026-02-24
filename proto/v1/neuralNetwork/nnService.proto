@@ -129,7 +129,7 @@ message InteractiveTrainNeuralNetworkResponse {
   Model model = 2;
 
   TrainingData trainingData = 3;
-  TestingData testData = 4;
+  TrainingData testData = 4;
   Prediction prediction = 5;
 }
 

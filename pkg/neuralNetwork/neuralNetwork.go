@@ -106,7 +106,6 @@ func (nn *NeuralNetwork) Train(xTrain []float32, yTrain []float32, xTest []float
 func (nn *NeuralNetwork) InteractiveTrain(xTrain []float32, yTrain []float32, xTest []float32, yTest []float32) {
 
 	p := nn.Model.LinearModel
-
 	for range nn.Model.Config.EpochBatch {
 
 		predicted := nn.Predict(xTrain)

@@ -28,11 +28,6 @@ message TrainingData {
   repeated float y = 2;
 }
 
-message TestingData {
-  repeated float x = 1;
-  repeated float y = 2;
-}
-
 message Prediction { repeated float y = 1; }
 
 message ModelState {

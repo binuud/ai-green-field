@@ -31,6 +31,12 @@ func (s *grpcNeuralnetworkserver) Create(ctx context.Context, in *protoV1.Create
 
 	logrus.Infof("Created Neural Network (%v)", s.Model)
 
+	nNet := nn.NewNeuralNetworkFromModel(s.Model)
+	err := nNet.Save("")
+	if err != nil {
+		logrus.Errorf("Cannot save model %v", err)
+	}
+
 	return &protoV1.CreateNeuralNetworkResponse{
 		Model: s.Model,
 	}, nil
@@ -42,10 +48,35 @@ func (s *grpcNeuralnetworkserver) Save(ctx context.Context, in *protoV1.SaveNeur
 
 	model.State.UpdatedAt = timestamppb.New(time.Now())
 
-	logrus.Infof("Saved Neural Network (%v)", model)
+	nNet := nn.NewNeuralNetworkFromModel(s.Model)
+	err := nNet.Save("")
+	if err != nil {
+		logrus.Errorf("Cannot save model %v", err)
+	} else {
+		logrus.Infof("Saved Neural Network (%v)", model)
+	}
 
 	return &protoV1.SaveNeuralNetworkResponse{
 		Model: model,
+	}, err
+}
+
+func (s *grpcNeuralnetworkserver) Load(ctx context.Context, in *protoV1.LoadNeuralNetworkRequest) (*protoV1.LoadNeuralNetworkResponse, error) {
+
+	model := in.Model
+
+	model.State.UpdatedAt = timestamppb.New(time.Now())
+
+	nNet, err := nn.NewNeuralNetworkFromModelFile(s.Model.Uuid)
+	if err != nil {
+		logrus.Errorf("Cannot load model %s", in.Model.Uuid)
+		return nil, err
+	}
+
+	logrus.Infof("Saved Neural Network (%v)", nNet.Model)
+
+	return &protoV1.LoadNeuralNetworkResponse{
+		Model: nNet.Model,
 	}, nil
 }
 
@@ -73,23 +104,23 @@ func (s *grpcNeuralnetworkserver) Train(ctx context.Context, in *protoV1.TrainNe
 	fmt.Printf("\n Test Data len %d, %d", len(xTest), len(yTest))
 
 	// create random training weights
-	nnModel := nn.NewNeuralNetwork(model.Config)
+	nNet := nn.NewNeuralNetwork(model.Config)
 
-	nnModel.LogConfig()
-	nnModel.Train(xTrain, yTrain, xTest, yTest)
-	nnModel.LogConfig()
+	nNet.LogConfig()
+	nNet.Train(xTrain, yTrain, xTest, yTest)
+	nNet.LogConfig()
 	//check model loss with test data
-	predicted := nnModel.Predict(xTest)
+	predicted := nNet.Predict(xTest)
 	// predicted := ApplyLinearEquation(xTrain, p.Weight, p.Bias)
 	loss := nn.CalculateLoss(yTest, predicted)
 	logrus.Printf("\n Loss on test data %f", loss)
 
-	nnModel.Model.State.UpdatedAt = timestamppb.New(time.Now())
+	nNet.Model.State.UpdatedAt = timestamppb.New(time.Now())
 
-	logrus.Infof("Training Neural Network (%v)", nnModel.Model)
+	logrus.Infof("Training Neural Network (%v)", nNet.Model)
 
 	return &protoV1.TrainNeuralNetworkResponse{
-		Model: nnModel.Model,
+		Model: nNet.Model,
 	}, nil
 }
 

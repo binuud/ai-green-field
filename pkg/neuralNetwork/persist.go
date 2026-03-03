@@ -13,7 +13,7 @@ const (
 	MODEL_DIRECTORY = "nn_models"
 )
 
-func (nn *NeuralNetwork) GetFileName() string {
+func GetNNStoreDirectory() string {
 
 	// FILE_STORE_PATH is the folder where data is stored as json files
 	FILE_STORE_PATH := os.Getenv("FILE_STORE_PATH")
@@ -21,7 +21,16 @@ func (nn *NeuralNetwork) GetFileName() string {
 		logrus.Fatal("env FILE_STORE_PATH not set")
 	}
 
-	return fmt.Sprintf("%s/%s/%s", FILE_STORE_PATH, MODEL_DIRECTORY, nn.Model.Uuid)
+	return fmt.Sprintf("%s/%s", FILE_STORE_PATH, MODEL_DIRECTORY)
+
+}
+
+func (nn *NeuralNetwork) GetFileName() string {
+
+	// FILE_STORE_PATH is the folder where data is stored as json files
+	storeDir := GetNNStoreDirectory()
+
+	return fmt.Sprintf("%s/%s", storeDir, nn.Model.Uuid)
 
 }
 

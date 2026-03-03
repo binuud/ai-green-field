@@ -6,6 +6,7 @@
 
 import * as fm from "../../fetch.pb"
 import * as GoogleProtobufTimestamp from "../../google/protobuf/timestamp.pb"
+import * as CommonFileInfo from "../common/fileInfo.pb"
 import * as NeuralNetworkNeuralNetwork from "./neuralNetwork.pb"
 
 export enum InteractiveTrainNeuralNetworkResponseResponseTypeEnum {
@@ -68,7 +69,7 @@ export type ListNeuralNetworkRequest = {
 }
 
 export type ListNeuralNetworkResponse = {
-  model?: NeuralNetworkNeuralNetwork.Model
+  files?: CommonFileInfo.FileMetadata[]
 }
 
 export type InteractiveTrainNeuralNetworkRequest = {

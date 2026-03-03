@@ -349,6 +349,27 @@ components:
       properties:
         model:
           $ref: '#/components/schemas/Model'
+    FileMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        modifiedAt:
+          type: string
+          format: date-time
+        checksum:
+          description: e.g., SHA256
+          type: string
+        isDirectory:
+          type: boolean
     InteractiveTrainNeuralNetworkRequest:
       type: object
       properties:
@@ -387,8 +408,10 @@ components:
     ListNeuralNetworkResponse:
       type: object
       properties:
-        model:
-          $ref: '#/components/schemas/Model'
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileMetadata'
     LoadNeuralNetworkRequest:
       type: object
       properties:

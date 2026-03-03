@@ -26,6 +26,8 @@ go.work.sum
 
 .DS_Store
 
+dataVolume/nn_models/*
+dataVolume/trainingData/*
 dataVolumes/goTest/*
 dataVolumes/store/*
 /data

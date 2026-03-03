@@ -7,6 +7,7 @@ import (
 
 	protoV1 "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork"
 	bTensor "github.com/binuud/ai-green-field/pkg/bTensor"
+	datalayer "github.com/binuud/ai-green-field/pkg/dataLayer"
 	nn "github.com/binuud/ai-green-field/pkg/neuralNetwork"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -73,7 +74,7 @@ func (s *grpcNeuralnetworkserver) Load(ctx context.Context, in *protoV1.LoadNeur
 		return nil, err
 	}
 
-	logrus.Infof("Saved Neural Network (%v)", nNet.Model)
+	logrus.Infof("Loaded Neural Network (%v)", nNet.Model)
 
 	return &protoV1.LoadNeuralNetworkResponse{
 		Model: nNet.Model,
@@ -121,6 +122,21 @@ func (s *grpcNeuralnetworkserver) Train(ctx context.Context, in *protoV1.TrainNe
 
 	return &protoV1.TrainNeuralNetworkResponse{
 		Model: nNet.Model,
+	}, nil
+}
+
+func (s *grpcNeuralnetworkserver) List(ctx context.Context, in *protoV1.ListNeuralNetworkRequest) (*protoV1.ListNeuralNetworkResponse, error) {
+
+	logrus.Infof("List Neural Network")
+	fileList, err := datalayer.ListFilesNonRecursive(nn.GetNNStoreDirectory())
+	if err != nil {
+		logrus.Errorf("Cannot list model %s", in.Model.Uuid)
+		return nil, err
+	}
+	logrus.Infof("File list %v", fileList)
+
+	return &protoV1.ListNeuralNetworkResponse{
+		Files: fileList,
 	}, nil
 }
 

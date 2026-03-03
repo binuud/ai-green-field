@@ -37,6 +37,7 @@ vendor: ## run vendor
 	go mod vendor
 
 protos: ## generate all protos
+	make proto-common
 	make proto-nn 
 	make proto-dataset
 
@@ -73,6 +74,22 @@ proto-dataset: ## generate protos for dataset
 	proto/v1/dataset/dataset.proto	\
 	proto/v1/dataset/datasetService.proto 
 	yq eval ./gen/go/v1/dataset/openapi.yaml -o=json -P > ./gen/go/v1/dataset/openapi.json
+
+proto-common: ## generate protos for common
+	$(PROTOC) -I=./proto/.  \
+	--go_out=./gen/go/ \
+	--go_opt paths=source_relative \
+	--go-grpc_out=./gen/go/ \
+	--go-grpc_opt paths=source_relative \
+	--grpc-gateway_out=./gen/go/ \
+	--grpc-gateway_opt paths=source_relative \
+	--grpc-gateway_opt generate_unbound_methods=true \
+	--grpc-gateway-ts_out=./gen/go/ \
+	--grpc-gateway-ts_opt paths=source_relative \
+	--grpc-gateway-ts_opt generate_unbound_methods=true \
+	--oas_out ./gen/go/v1/common/ \
+	proto/v1/common/fileInfo.proto
+	yq eval ./gen/go/v1/common/openapi.yaml -o=json -P > ./gen/go/v1/common/openapi.json	
 
 run-staging: ## run staging test
 	./scripts/runStaging.sh	

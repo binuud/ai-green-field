@@ -1,0 +1,17 @@
+syntax = "proto3";
+package common;
+
+option go_package = "github.com/binuud/ai-green-field/gen/go/v1/common";
+
+import "google/protobuf/timestamp.proto";
+
+// Represents metadata about a file
+message FileMetadata {
+  string name = 1;
+  string path = 2;
+  int64 size = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp modified_at = 5;
+  string checksum = 6; // e.g., SHA256
+  bool is_directory = 7;
+}

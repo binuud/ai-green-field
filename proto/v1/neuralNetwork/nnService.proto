@@ -9,6 +9,7 @@ option go_package = "github.com/binuud/ai-green-field/gen/go/v1/neuralNetwork";
 
 import "google/api/annotations.proto";
 import "v1/neuralNetwork/neuralNetwork.proto";
+import "v1/common/fileInfo.proto";
 import "google/protobuf/timestamp.proto";
 
 // NeuralNetwork
@@ -112,7 +113,7 @@ message SaveNeuralNetworkRequest { Model model = 1; }
 message SaveNeuralNetworkResponse { Model model = 1; }
 
 message ListNeuralNetworkRequest { Model model = 1; }
-message ListNeuralNetworkResponse { Model model = 1; }
+message ListNeuralNetworkResponse { repeated common.FileMetadata files = 1; }
 
 message InteractiveTrainNeuralNetworkRequest {
   Model model = 1;

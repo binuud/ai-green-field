@@ -106,7 +106,7 @@ message TrainNeuralNetworkResponse { Model model = 1; }
 message TestNeuralNetworkRequest { Model model = 1; }
 message TestNeuralNetworkResponse { Model model = 1; }
 
-message LoadNeuralNetworkRequest { Model model = 1; }
+message LoadNeuralNetworkRequest { string file = 1; }
 message LoadNeuralNetworkResponse { Model model = 1; }
 
 message SaveNeuralNetworkRequest { Model model = 1; }

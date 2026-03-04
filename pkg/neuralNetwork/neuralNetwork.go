@@ -47,7 +47,7 @@ func NewNeuralNetworkFromModel(model *protoV1.Model) *NeuralNetwork {
 
 func NewNeuralNetworkFromModelFile(ModelFile string) (*NeuralNetwork, error) {
 
-	err, model := loadFromModelFile(ModelFile)
+	model, err := loadFromModelFile(ModelFile)
 	if err != nil {
 		return nil, err
 	}

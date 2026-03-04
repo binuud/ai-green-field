@@ -49,7 +49,7 @@ export type TestNeuralNetworkResponse = {
 }
 
 export type LoadNeuralNetworkRequest = {
-  model?: NeuralNetworkNeuralNetwork.Model
+  file?: string
 }
 
 export type LoadNeuralNetworkResponse = {

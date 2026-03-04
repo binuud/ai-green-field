@@ -25,21 +25,27 @@ func GetNNStoreDirectory() string {
 
 }
 
-func (nn *NeuralNetwork) GetFileName() string {
+func GetFileAbsolutePath(fileName string) string {
 
 	// FILE_STORE_PATH is the folder where data is stored as json files
 	storeDir := GetNNStoreDirectory()
 
-	return fmt.Sprintf("%s/%s", storeDir, nn.Model.Uuid)
+	return fmt.Sprintf("%s/%s", storeDir, fileName)
+
+}
+
+func (nn *NeuralNetwork) GetFileName() string {
+
+	return GetFileAbsolutePath(nn.Model.Uuid)
 
 }
 
 // internal function to load from model file
-func loadFromModelFile(fileName string) (error, *protoV1.Model) {
+func loadFromModelFile(fileName string) (*protoV1.Model, error) {
 
-	file, err := os.Open(fileName)
+	file, err := os.Open(GetFileAbsolutePath(fileName))
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	defer file.Close() // Ensure the file is closed
 
@@ -47,9 +53,9 @@ func loadFromModelFile(fileName string) (error, *protoV1.Model) {
 	decoder := gob.NewDecoder(file)
 	err = decoder.Decode(model) // Decode into the pointer
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
-	return nil, model
+	return model, nil
 
 }
 

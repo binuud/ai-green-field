@@ -49,7 +49,7 @@ func (s *grpcNeuralnetworkserver) Save(ctx context.Context, in *protoV1.SaveNeur
 
 	model.State.UpdatedAt = timestamppb.New(time.Now())
 
-	nNet := nn.NewNeuralNetworkFromModel(s.Model)
+	nNet := nn.NewNeuralNetworkFromModel(model)
 	err := nNet.Save("")
 	if err != nil {
 		logrus.Errorf("Cannot save model %v", err)
@@ -64,13 +64,11 @@ func (s *grpcNeuralnetworkserver) Save(ctx context.Context, in *protoV1.SaveNeur
 
 func (s *grpcNeuralnetworkserver) Load(ctx context.Context, in *protoV1.LoadNeuralNetworkRequest) (*protoV1.LoadNeuralNetworkResponse, error) {
 
-	model := in.Model
+	fileName := in.File
 
-	model.State.UpdatedAt = timestamppb.New(time.Now())
-
-	nNet, err := nn.NewNeuralNetworkFromModelFile(s.Model.Uuid)
+	nNet, err := nn.NewNeuralNetworkFromModelFile(fileName)
 	if err != nil {
-		logrus.Errorf("Cannot load model %s", in.Model.Uuid)
+		logrus.Errorf("Cannot load model %s", fileName)
 		return nil, err
 	}
 

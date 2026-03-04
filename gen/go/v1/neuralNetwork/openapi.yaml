@@ -415,8 +415,8 @@ components:
     LoadNeuralNetworkRequest:
       type: object
       properties:
-        model:
-          $ref: '#/components/schemas/Model'
+        file:
+          type: string
     LoadNeuralNetworkResponse:
       type: object
       properties:
